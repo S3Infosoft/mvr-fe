@@ -4,8 +4,8 @@ from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 
-LOGIN_URL = reverse("user:login")
-REGISTER_URL = reverse("user:register")
+LOGIN_URL = reverse("login")
+REGISTER_URL = reverse("register")
 
 
 class CustomUserManagerTestCase(TestCase):
@@ -96,7 +96,7 @@ class LoginViewTestCase(TestCase):
         })
 
         self.assertEqual(res.status_code, 302)
-        self.assertRedirects(res, reverse("user:index"))
+        self.assertRedirects(res, reverse("index"))
 
     def test_redirects_already_logged_in(self):
 
@@ -105,7 +105,7 @@ class LoginViewTestCase(TestCase):
         res = self.client.get(LOGIN_URL)
 
         self.assertEqual(res.status_code, 302)
-        self.assertRedirects(res, reverse("user:index"))
+        self.assertRedirects(res, reverse("index"))
 
 
 class RegisterViewTestCase(TestCase):
@@ -152,7 +152,7 @@ class RegisterViewTestCase(TestCase):
         res = self.client.post(REGISTER_URL, data=params)
 
         self.assertEqual(res.status_code, 302)
-        self.assertRedirects(res, reverse("user:login"))
+        self.assertRedirects(res, reverse("login"))
 
     def test_register_page_fails_on_duplicate_user(self):
 
@@ -186,4 +186,4 @@ class RegisterViewTestCase(TestCase):
         res = self.client.get(REGISTER_URL)
 
         self.assertEqual(res.status_code, 302)
-        self.assertRedirects(res, reverse("user:index"))
+        self.assertRedirects(res, reverse("index"))

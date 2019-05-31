@@ -112,8 +112,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static_root")
 
 AUTH_USER_MODEL = "users.CustomUser"
 
-LOGIN_URL = "user:login"
-LOGOUT_URL = "user:logout"
+LOGIN_URL = "login"
+LOGOUT_URL = "logout"
 
-LOGIN_REDIRECT_URL = "user:index"
-LOGOUT_REDIRECT_URL = "user:login"
+LOGIN_REDIRECT_URL = "index"
+LOGOUT_REDIRECT_URL = "login"

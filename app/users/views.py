@@ -12,7 +12,7 @@ def index(request):
 
 class LoginView(views.LoginView):
     template_name = "users/login.html"
-    success_url = reverse_lazy("user:index")
+    success_url = reverse_lazy("index")
 
     def get(self, request, *args, **kwargs):
 
@@ -25,7 +25,7 @@ class LoginView(views.LoginView):
 
 class RegisterView(generic.CreateView):
     form_class = RegisterForm
-    success_url = reverse_lazy("user:login")
+    success_url = reverse_lazy("login")
     template_name = "users/register.html"
 
     def get(self, request, *args, **kwargs):
