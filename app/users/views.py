@@ -2,10 +2,11 @@ from .forms import RegisterForm
 
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from django.contrib.auth import views
+from django.contrib.auth import views, decorators
 from django.views import generic
 
 
+@decorators.login_required
 def index(request):
     return render(request, "index.html")
 

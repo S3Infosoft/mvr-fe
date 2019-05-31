@@ -125,3 +125,24 @@ class RegisterViewTestCase(TestCase):
 
         self.assertEqual(res.status_code, 302)
         self.assertRedirects(res, reverse("index"))
+
+
+class IndexViewTestCase(TestCase):
+    """"Test for the index page view"""
+
+    def test_redirect_to_login_for_unauthenticated_user(self):
+
+        res = self.client.get("/")
+
+        self.assertEqual(res.status_code, 302)
+        self.assertRedirects(res, LOGIN_URL+"?next=/")
+
+    def test_page_access_to_authenticated_users(self):
+
+        user = get_user_model().objects.create_user("test@django.com", "django123")
+        self.client.force_login(user)
+
+        res = self.client.get("/")
+
+        self.assertEqual(res.status_code, 200)
+        self.assertTemplateUsed(res, "index.html")
