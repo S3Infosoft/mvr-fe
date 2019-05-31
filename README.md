@@ -48,4 +48,7 @@ Front End Application
 - Register: <http://localhost:8000/register/>
 - Login: <http://localhost:8000/login/>
 - Logout: <http://localhost:8000/logout/>
+- Change Password: <http://localhost:8000/password_change/>
+- Forgot Password: <http://localhost:8000/password_reset/>
+  - Enter the link given in terminal to browser
  

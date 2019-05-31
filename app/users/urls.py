@@ -4,6 +4,10 @@ from django.contrib.auth import views as auth_views
 from django.urls import path, include
 
 password_urls = [
+    path("change/done/", auth_views.PasswordChangeDoneView.as_view(),
+         name="password_change_done"),
+    path("change/", auth_views.PasswordChangeView.as_view(),
+         name="password_change"),
     path("reset/done/", auth_views.PasswordResetDoneView.as_view(),
          name="password_reset_done"),
     path("reset/complete/", auth_views.PasswordResetCompleteView.as_view(),
