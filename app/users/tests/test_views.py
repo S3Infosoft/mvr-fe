@@ -5,6 +5,12 @@ from django.contrib.auth import get_user_model
 
 LOGIN_URL = reverse("login")
 REGISTER_URL = reverse("register")
+PASSWORD_CHANGE = reverse("password_change")
+PASSWORD_RESET = reverse("password_reset")
+
+
+def password_reset_confirm_url(uid, token):
+    return reverse("password_reset_confirm", args=[uid, token])
 
 
 class LoginViewTestCase(TestCase):
@@ -146,3 +152,135 @@ class IndexViewTestCase(TestCase):
 
         self.assertEqual(res.status_code, 200)
         self.assertTemplateUsed(res, "index.html")
+
+
+class PasswordChangeViewTestCaseLoggedOut(TestCase):
+    """Test for password change when user is unauthenticated"""
+
+    def test_redirect_to_login_for_unauthenticated_user(self):
+
+        res = self.client.get(PASSWORD_CHANGE)
+
+        self.assertEquals(res.status_code, 302)
+        self.assertRedirects(res, LOGIN_URL+"?next=/password_change/")
+
+
+class PasswordChangeViewTestCaseLoggedIn(TestCase):
+    """Tests for the Password change view"""
+
+    def setUp(self):
+        self.client = Client()
+        self.user = get_user_model().objects.create_user("test@django.com", "django123")
+        self.client.force_login(self.user)
+
+    def test_page_load_successfully(self):
+
+        res = self.client.get(PASSWORD_CHANGE)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertTemplateUsed(res, "registration/password_change_form.html")
+
+    def test_page_changes_password_and_redirects_successfully(self):
+
+        params = {
+            "old_password": "django123",
+            "new_password1": "awesome_django",
+            "new_password2": "awesome_django",
+        }
+        res = self.client.post(PASSWORD_CHANGE, data=params)
+        self.user.refresh_from_db()
+
+        self.assertEquals(res.status_code, 302)
+        self.assertRedirects(res, reverse("password_change_done"))
+        self.assertFalse(self.user.check_password(params["old_password"]))
+        self.assertTrue(self.user.check_password(params["new_password1"]))
+
+    def test_page_error_on_wrong_old_password(self):
+
+        params = {
+            "old_password": "ruby_on_rails",
+            "new_password1": "testing_is_boring",
+            "new_password2": "testing_is_boring",
+        }
+
+        res = self.client.post(PASSWORD_CHANGE, data=params)
+
+        self.assertEquals(res.status_code, 200)
+        self.assertTemplateUsed(res, "registration/password_change_form.html")
+        self.assertFormError(res, "form", "old_password",
+                             "Your old password was entered incorrectly. Please enter it again.")
+
+    def test_page_error_on_repeat_password_doesnt_match(self):
+
+        params = {
+            "old_password": "django123",
+            "new_password1": "testing_is_boring",
+            "new_password2": "yes_it_is",
+        }
+
+        res = self.client.post(PASSWORD_CHANGE, data=params)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertTemplateUsed(res, "registration/password_change_form.html")
+        self.assertFormError(res, "form", "new_password2", "The two password fields didn't match.")
+
+
+class PasswordResetViewTestCase(TestCase):
+    """Tests for password reset view"""
+
+    def setUp(self):
+        self.client = Client()
+        self.user = get_user_model().objects.create_user("test@django.com", "django123")
+
+    def test_page_loads_successfully(self):
+
+        res = self.client.get(PASSWORD_RESET)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertTemplateUsed(res, "registration/password_reset_form.html")
+
+    def test_page_redirects_after_entering_email(self):
+
+        res = self.client.post(PASSWORD_RESET, data={"email": self.user.email})
+
+        self.assertEqual(res.status_code, 302)
+        self.assertRedirects(res, reverse("password_reset_done"))
+
+    def test_page_sends_email_successfully(self):
+        res = self.client.post(PASSWORD_RESET, data={"email": "test@django.com"})
+        from django.core import mail
+
+        self.assertEqual(res.status_code, 302)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to, [self.user.email])
+
+    def test_page_changes_password_and_redirects(self):
+
+        params = {
+            "new_password1": "its_six_am",
+            "new_password2": "its_six_am",
+        }
+
+        res = self.client.post(PASSWORD_RESET, data={"email": self.user.email})
+        from django.core import mail
+
+        self.assertEqual(res.status_code, 302)
+        self.assertEqual(len(mail.outbox), 1)
+
+        token = res.context[0]["token"]
+        uid = res.context[0]["uid"]
+
+        res = self.client.post(password_reset_confirm_url(uid, token))
+
+        redirect_url = f"/password_new/{uid}/set-password/"
+
+        self.assertEqual(res.status_code, 302)
+        self.assertRedirects(res, redirect_url)
+
+        res = self.client.post(redirect_url, data=params)
+        self.user.refresh_from_db()
+
+        self.assertEqual(res.status_code, 302)
+        self.assertRedirects(res, reverse("password_reset_complete"))
+        self.assertTrue(self.user.check_password(params["new_password1"]))
+        self.assertFalse(self.user.check_password("django123"))
