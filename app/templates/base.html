@@ -44,6 +44,8 @@
         {% include "snippets/navbar.html" %}
         <!-- End of topbar -->
 
+        {% include 'snippets/alerts.html' %}
+
         <!-- Begin Page Content -->
         <div class="container-fluid">
           {% block content %}
@@ -88,6 +90,8 @@
 
   <!-- Custom scripts for all pages-->
   <script src="{% static 'js/sb-admin-2.min.js' %}"></script>
+
+  <script src="{% static 'js/custom.js' %}"></script>
 
   {% block extra_script %}
   {% endblock extra_script %}
