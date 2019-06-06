@@ -143,11 +143,22 @@ LOGGING = {
             "filename": LOG_DIR + "/auth.log",
             "formatter": "format",
         },
+        "api_file": {
+            "level": "INFO",
+            "class": "logging.FileHandler",
+            "filename": LOG_DIR + "/api.log",
+            "formatter": "format",
+        }
     },
 
     "loggers": {
         "auth": {
             "handlers": ["auth_file"],
+            "level": "INFO",
+            "propagate": True,
+        },
+        "api": {
+            "handlers": ["api_file"],
             "level": "INFO",
             "propagate": True,
         },

@@ -51,4 +51,5 @@ Front End Application
 - Change Password: <http://localhost:8000/password_change/>
 - Forgot Password: <http://localhost:8000/password_reset/>
   - Enter the link given in terminal to browser
+- API: <http://localhost:8000/api/v1/>
  
