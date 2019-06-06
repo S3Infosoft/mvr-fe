@@ -121,3 +121,35 @@ LOGIN_REDIRECT_URL = "index"
 LOGOUT_REDIRECT_URL = "login"
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+LOG_DIR = os.path.join(BASE_DIR, "LOGS")
+
+if not os.path.exists(LOG_DIR):
+    os.makedirs(LOG_DIR)
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "format": {
+            "format": "%(levelname)s: %(filename)s: %(asctime)s: %(message)s",
+        }
+    },
+
+    "handlers": {
+        "auth_file": {
+            "level": "INFO",
+            "class": "logging.FileHandler",
+            "filename": LOG_DIR + "/auth.log",
+            "formatter": "format",
+        },
+    },
+
+    "loggers": {
+        "auth": {
+            "handlers": ["auth_file"],
+            "level": "INFO",
+            "propagate": True,
+        },
+    },
+}

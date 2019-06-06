@@ -15,7 +15,7 @@ password_urls = [
     path("new/<uidb64>/<token>/",
          views.PasswordResetConfirmView.as_view(),
          name="password_reset_confirm"),
-    path("reset/", auth_views.PasswordResetView.as_view(),
+    path("reset/", views.PasswordResetView.as_view(),
          name="password_reset"),
 ]
 
