@@ -21,7 +21,7 @@ class Partner(models.Model):
         ("TOUR_ORGANISER", "Tour Organiser"),
     )
     name = models.CharField(max_length=150)
-    type = models.CharField(choices=PARTNERS, max_length=30)
+    partner_type = models.CharField(choices=PARTNERS, max_length=30)
     contact_person = models.CharField(max_length=150)
     contact_name = models.CharField(max_length=150)
     contact_email = models.EmailField()
@@ -42,7 +42,7 @@ class Review(models.Model):
     source = models.CharField(max_length=250)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    rating = models.PositiveSmallIntegerField(choices=RATINGS)
+    rating = models.FloatField(choices=RATINGS)
     description = models.TextField()
     action = models.TextField()
 
