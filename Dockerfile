@@ -10,5 +10,8 @@ RUN mkdir /app
 WORKDIR /app
 COPY ./app /app
 
+RUN mkdir -p /LOGS
 RUN adduser -D user
+RUN chown -R user:user /LOGS
+RUN chmod -R 755 /LOGS
 USER user

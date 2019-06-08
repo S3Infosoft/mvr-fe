@@ -122,7 +122,7 @@ LOGOUT_REDIRECT_URL = "login"
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-LOG_DIR = os.path.join(BASE_DIR, "LOGS")
+LOG_DIR = "/LOGS"
 
 if not os.path.exists(LOG_DIR):
     os.makedirs(LOG_DIR)
