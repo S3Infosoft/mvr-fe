@@ -2,6 +2,10 @@ from django.db import IntegrityError
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 
+import logging
+
+logging.disable(logging.CRITICAL)
+
 
 class CustomUserManagerTestCase(TestCase):
     """Tests for the CustomUserManager"""

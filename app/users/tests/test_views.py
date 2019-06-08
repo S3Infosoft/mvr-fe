@@ -3,6 +3,10 @@ from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 
+import logging
+
+logging.disable(logging.CRITICAL)
+
 LOGIN_URL = reverse("login")
 REGISTER_URL = reverse("register")
 PASSWORD_CHANGE = reverse("password_change")
