@@ -96,9 +96,29 @@
 
       <!-- Nav Item - Charts -->
       <li class="nav-item">
-        <a class="nav-link" href="#% url 'chart' %}">
-          <i class="fas fa-fw fa-chart-area"></i>
-          <span>Charts</span></a>
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAdmin" aria-expanded="true" aria-controls="collapsePages">
+          <i class="fas fa-fw fa-folder"></i>
+          <span>Admin</span>
+        </a>
+        <div id="collapseAdmin" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+          <div class="bg-white py-2 collapse-inner rounded">
+            <h6 class="collapse-header">Account</h6>
+            {% if request.user.is_authenticated %}
+              <a id="ota-link" class="collapse-item" href="{% url 'enquiry:ota' %}">OTA</a>
+              <a id="partners-link" class="collapse-item" href="{% url 'enquiry:partner' %}">Partners</a>
+              <a id="review-link" class="collapse-item" href="{% url 'enquiry:review' %}">Review</a>
+            {% else %}
+              <a class="collapse-item" href="{% url 'login' %}">Login</a>
+              <a class="collapse-item" href="{% url 'register' %}">Register</a>
+              <a class="collapse-item" href="{% url 'password_reset' %}">Reset Password</a>
+            {% endif %}
+            <!-- <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
+            <div class="collapse-divider"></div>
+            <h6 class="collapse-header">Other Pages:</h6>
+            <a class="collapse-item" href="404.html">404 Page</a>
+            <a class="collapse-item" href="blank.html">Blank Page</a> -->
+          </div>
+        </div>
       </li>
 
       <!-- Nav Item - Tables -->
