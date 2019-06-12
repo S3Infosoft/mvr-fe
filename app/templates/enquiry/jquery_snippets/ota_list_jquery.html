@@ -1,14 +1,8 @@
-{% extends "base.html" %}
+
 {% load static %}
-
-{% block title %}{{ block.super }} - Partner{% endblock title %}
-
-{% block extra_css %}
   <link rel="stylesheet" href="{% static 'vendor/datatables/dataTables.bootstrap4.min.css' %}">
-{% endblock extra_css %}
 
-{% block content %}
-  <h1 class="h3 mb-2 text-gray-800">Partner Table</h1>
+  <h1 class="h3 mb-2 text-gray-800">OTA Table</h1>
 
           <!-- DataTales Example -->
           <div class="card shadow mb-4">
@@ -21,7 +15,7 @@
                   <thead>
                     <tr>
                       <th>Name</th>
-                      <th>Partner Type</th>
+                      <th>Registration</th>
                       <th>Contact Person</th>
                       <th>Contact Name</th>
                       <th>Contact Email</th>
@@ -40,11 +34,6 @@
               </div>
             </div>
           </div>
-
-{% endblock content %}
-
-{% block extra_script %}
-
   <!-- Scripts for table -->
   <script src="{% static 'vendor/datatables/jquery.dataTables.min.js' %}"></script>
   <script src="{% static 'vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
@@ -54,7 +43,7 @@
     $(document).ready(function() {
 
       $.ajax({
-          url: window.location.origin + "/api/v1/partner/",
+          url: window.location.origin + "/api/v1/ota/",
           method: "GET",
           success: function (data) {
               console.log(data);
@@ -62,7 +51,7 @@
                   "aaData": data,
                   "columns": [
                       {"data": "name"},
-                      {"data": "partner_type"},
+                      {"data": "registration"},
                       {"data": "contact_person"},
                       {"data": "contact_name"},
                       {"data": "contact_email"},
@@ -77,6 +66,3 @@
       });
     });
   </script>
-
-{% endblock extra_script %}
-

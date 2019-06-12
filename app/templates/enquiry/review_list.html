@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}{{ block.super }} - OTA{% endblock title %}
+{% block title %}{{ block.super }} - Review{% endblock title %}
 
 {% block extra_css %}
   <link rel="stylesheet" href="{% static 'vendor/datatables/dataTables.bootstrap4.min.css' %}">
 {% endblock extra_css %}
 
 {% block content %}
-  <h1 class="h3 mb-2 text-gray-800">OTA Table</h1>
+  <h1 class="h3 mb-2 text-gray-800">Review Table</h1>
 
           <!-- DataTales Example -->
           <div class="card shadow mb-4">
@@ -57,7 +57,7 @@
     $(document).ready(function() {
 
       $.ajax({
-          url: "http://localhost:8000" + "/api/v1/review/",
+          url: window.location.origin + "/api/v1/review/",
           method: "GET",
           success: function (data) {
               console.log(data);

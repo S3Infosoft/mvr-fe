@@ -1,14 +1,9 @@
-{% extends "base.html" %}
+
 {% load static %}
 
-{% block title %}{{ block.super }} - Partner{% endblock title %}
-
-{% block extra_css %}
   <link rel="stylesheet" href="{% static 'vendor/datatables/dataTables.bootstrap4.min.css' %}">
-{% endblock extra_css %}
 
-{% block content %}
-  <h1 class="h3 mb-2 text-gray-800">Partner Table</h1>
+  <h1 class="h3 mb-2 text-gray-800">Review Table</h1>
 
           <!-- DataTales Example -->
           <div class="card shadow mb-4">
@@ -20,30 +15,31 @@
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                   <thead>
                     <tr>
-                      <th>Name</th>
-                      <th>Partner Type</th>
-                      <th>Contact Person</th>
-                      <th>Contact Name</th>
-                      <th>Contact Email</th>
+                      <th>Headlinw</th>
+                      <th>Source</th>
+                      <th>Created</th>
+                      <th>Rating</th>
+                      <th>Action</th>
                     </tr>
                   </thead>
                   <tfoot>
                     <tr>
-                      <th>Name</th>
-                      <th>Registration</th>
-                      <th>Contact Person</th>
-                      <th>Contact Name</th>
-                      <th>Contact Email</th>
+                      <th>Headlinw</th>
+                      <th>Source</th>
+                      <th>Created</th>
+                      <th>Rating</th>
+                      <th>Action</th>
                     </tr>
                   </tfoot>
+                  <tbody>
+
+                  </tbody>
                 </table>
               </div>
             </div>
           </div>
 
-{% endblock content %}
 
-{% block extra_script %}
 
   <!-- Scripts for table -->
   <script src="{% static 'vendor/datatables/jquery.dataTables.min.js' %}"></script>
@@ -54,18 +50,18 @@
     $(document).ready(function() {
 
       $.ajax({
-          url: window.location.origin + "/api/v1/partner/",
+          url: window.location.origin + "/api/v1/review/",
           method: "GET",
           success: function (data) {
               console.log(data);
               $("#dataTable").dataTable({
                   "aaData": data,
                   "columns": [
-                      {"data": "name"},
-                      {"data": "partner_type"},
-                      {"data": "contact_person"},
-                      {"data": "contact_name"},
-                      {"data": "contact_email"},
+                      {"data": "headline"},
+                      {"data": "source"},
+                      {"data": "created"},
+                      {"data": "rating"},
+                      {"data": "action"},
                   ]
               });
 
@@ -78,5 +74,4 @@
     });
   </script>
 
-{% endblock extra_script %}
 
