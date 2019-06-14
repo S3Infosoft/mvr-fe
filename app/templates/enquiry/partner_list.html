@@ -54,7 +54,7 @@
     $(document).ready(function() {
 
       $.ajax({
-          url: window.location.origin + "/api/v1/partner/",
+          url: window.location.origin + "{% url 'partner-list' %}",
           method: "GET",
           success: function (data) {
               console.log(data);

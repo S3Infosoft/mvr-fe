@@ -57,7 +57,7 @@
     $(document).ready(function() {
 
       $.ajax({
-          url: window.location.origin + "/api/v1/review/",
+          url: window.location.origin + "{% url 'review-list' %}",
           method: "GET",
           success: function (data) {
               console.log(data);
