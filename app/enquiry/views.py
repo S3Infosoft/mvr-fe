@@ -6,7 +6,6 @@ from django.contrib.auth.decorators import login_required
 def ota_list(request):
     if request.is_ajax():
         return render(request, "enquiry/jquery_snippets/ota_list_jquery.html")
-    print("Not if FuckS")
     return render(request, "enquiry/ota_list.html")
 
 
