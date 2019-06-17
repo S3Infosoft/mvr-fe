@@ -52,4 +52,5 @@ Front End Application
 - Forgot Password: <http://localhost:8000/password_reset/>
   - Enter the link given in terminal to browser
 - API: <http://localhost:8000/api/v1/>
+- Profile View/Update: <http://localhost:8000/profile/>
  

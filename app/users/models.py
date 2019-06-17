@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 from django.contrib.auth import base_user, models as auth_models
 from django.utils.translation import ugettext_lazy as _
 
@@ -54,3 +55,7 @@ class CustomUser(auth_models.AbstractUser):
 
     def __str__(self):
         return self.email
+
+    @staticmethod
+    def get_absolute_url():
+        return reverse("profile")
