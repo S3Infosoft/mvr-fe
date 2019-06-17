@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}Profile - {{ block.super }}{% endblock title %}
+
+{% block content %}
+<div class="container text-dark">
+<div class="row flex-lg-nowrap">
+
+  <div class="col">
+    <div class="row">
+      <div class="col mb-3">
+        <div class="card">
+          <div class="card-body">
+            <div class="e-profile">
+              <div class="row">
+                <div class="col-12 col-sm-auto mb-3">
+                  <div class="mx-auto" style="width: 140px;">
+                    <div class="d-flex justify-content-center align-items-center rounded" style="height: 140px; background-color: rgb(233, 236, 239);">
+                      <span style="color: rgb(166, 168, 170); font: bold 8pt Arial;">140x140</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col d-flex flex-column flex-sm-row justify-content-between mb-3">
+                  <div class="text-center text-sm-left mb-2 mb-sm-0">
+                    <h4 class="pt-sm-2 pb-1 mb-0 text-nowrap ">{{request.user.get_full_name}}</h4>
+                    <p class="mb-0">{{ request.user.email }}</p>
+                    <div class="mt-2">
+                      <button class="btn btn-primary" type="button">
+                        <i class="fa fa-fw fa-camera"></i>
+                        <span>Change Photo</span>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="text-center text-sm-right">
+                    <div class="text-muted"><small>Joined {{request.user.date_joined.date}}</small></div>
+                    <div class="text-muted"><small>Last login {{ request.user.last_login.date }}</small></div>
+                  </div>
+                </div>
+              </div>
+              <ul class="nav nav-tabs">
+                <li class="nav-item"><a class="active nav-link">Settings</a></li>
+              </ul>
+              <div class="tab-content pt-3">
+                <div class="tab-pane active">
+                  <form class="form" method="post">
+                    <div class="row">
+                      <div class="col font-weight-bold">
+                        <div class="row">
+                          {% csrf_token %}
+                          <div class="col">
+                            <div class="form-group">
+                              <label for="{{ form.first_name.id_for_label }}">First Name</label>
+                              <input type="text" class="form-control form-control-user"
+                                     id="{{ form.first_name.id_for_label }}"
+                                     name="{{ form.first_name.html_name }}"
+                                     placeholder="First Name"
+                                     value="{{ form.first_name.value | default_if_none:'' }}"
+                                     required>
+                              {{ form.first_name.errors }}
+                            </div>
+                          </div>
+                          <div class="col">
+                            <div class="form-group">
+                              <label for="{{ form.last_name.id_for_label }}">Last Name</label>
+                              <input type="text" class="form-control form-control-user"
+                                     id="{{ form.last_name.id_for_label }}"
+                                     name="{{ form.last_name.html_name }}"
+                                     value="{{ form.last_name.value | default_if_none:'' }}"
+                                     placeholder="Last Name">
+                              {{ form.last_name.errors }}
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col">
+                            <div class="form-group">
+                              <label for="{{ form.email.id_for_label }}">Email</label>
+                              <input type="email" class="form-control form-control-user"
+                                     id="{{ form.email.id_for_label }}"
+                                     name="{{ form.email.html_name }}"
+                                     placeholder="Email Address"
+                                     value="{{ form.email.value | default_if_none:'' }}"
+                                     required>
+                              {% for error in form.email.errors %}
+                                <span class="text-danger">{{ error }}</span>
+                              {% endfor %}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-12 col-sm-6 mb-3">
+                        <a href="{% url 'password_change' %}">Change password</a>
+                      </div>
+
+                    </div>
+                    <div class="row">
+                      <div class="col d-flex justify-content-end">
+                        <button class="btn btn-primary" type="submit">Save Changes</button>
+                      </div>
+                    </div>
+                  </form>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+</div>
+
+{% endblock content %}

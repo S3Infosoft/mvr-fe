@@ -3,13 +3,30 @@ from .forms import RegisterForm
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views import generic
-from django.contrib.auth import views, decorators, get_user_model
+from django.contrib.auth import views, decorators, get_user_model, mixins
 from django.contrib.messages.views import SuccessMessageMixin
 from django.utils.http import urlsafe_base64_decode
 
 import logging
 
 logger = logging.getLogger("auth")
+
+
+class ProfileDetailUpdate(mixins.LoginRequiredMixin,
+                          SuccessMessageMixin,
+                          generic.UpdateView):
+    model = get_user_model()
+    fields = "email", "first_name", "last_name",
+    template_name = "users/profile.html"
+    success_message = "Your profile has been successfully updated."
+
+    def get_object(self, queryset=None):
+
+        return self.request.user
+
+    def form_valid(self, form):
+        logger.info("Profile Updated by {}".format(self.request.user.email))
+        return super(ProfileDetailUpdate, self).form_valid(form)
 
 
 @decorators.login_required
