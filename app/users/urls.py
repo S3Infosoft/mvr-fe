@@ -1,7 +1,8 @@
 from . import views
 
-from django.contrib.auth import views as auth_views
 from django.urls import path, include
+from django.contrib.auth import views as auth_views
+from django.views.generic.base import RedirectView
 
 password_urls = [
     path("change/done/", auth_views.PasswordChangeDoneView.as_view(),
@@ -24,5 +25,6 @@ urlpatterns = [
     path("logout/", auth_views.LogoutView.as_view(), name="logout"),
     path("register/", views.RegisterView.as_view(), name="register"),
     path("password_", include(password_urls)),
-    path("", views.index, name="index"),
+    path("dashboard/", views.index, name="index"),
+    path("", RedirectView.as_view(url="/dashboard/", permanent=True)),
 ]

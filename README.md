@@ -44,7 +44,7 @@ Front End Application
 
 
 #### Links
-- HomePage: <http://localhost:8000/>
+- HomePage: <http://localhost:8000/dashboard/>
 - Register: <http://localhost:8000/register/>
 - Login: <http://localhost:8000/login/>
 - Logout: <http://localhost:8000/logout/>

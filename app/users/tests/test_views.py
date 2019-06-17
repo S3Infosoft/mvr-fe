@@ -7,6 +7,7 @@ import logging
 
 logging.disable(logging.CRITICAL)
 
+INDEX_URL = reverse("index")
 LOGIN_URL = reverse("login")
 REGISTER_URL = reverse("register")
 PASSWORD_CHANGE = reverse("password_change")
@@ -142,17 +143,17 @@ class IndexViewTestCase(TestCase):
 
     def test_redirect_to_login_for_unauthenticated_user(self):
 
-        res = self.client.get("/")
+        res = self.client.get(INDEX_URL)
 
         self.assertEqual(res.status_code, 302)
-        self.assertRedirects(res, LOGIN_URL+"?next=/")
+        self.assertRedirects(res, LOGIN_URL+"?next="+INDEX_URL)
 
     def test_page_access_to_authenticated_users(self):
 
         user = get_user_model().objects.create_user("test@django.com", "django123")
         self.client.force_login(user)
 
-        res = self.client.get("/")
+        res = self.client.get(INDEX_URL)
 
         self.assertEqual(res.status_code, 200)
         self.assertTemplateUsed(res, "index.html")

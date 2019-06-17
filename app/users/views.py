@@ -26,7 +26,7 @@ class LoginView(SuccessMessageMixin, views.LoginView):
 
         # Prevent already login user from this page
         if self.request.user.is_authenticated:
-            return redirect("/")
+            return redirect("index")
 
         return super(LoginView, self).get(request, *args, **kwargs)
     
@@ -47,7 +47,7 @@ class RegisterView(SuccessMessageMixin, generic.CreateView):
 
         # Prevent already logged in user from this page
         if self.request.user.is_authenticated:
-            return redirect("/")
+            return redirect("index")
         
         return super(RegisterView, self).get(request, *args, **kwargs)
 
