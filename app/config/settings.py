@@ -26,8 +26,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     "users.apps.UsersConfig",
-    "enquiry.apps.EnquiryConfig",
+
+    # Packages
     "rest_framework",
+
+    # Apps
+    "enquiry.apps.EnquiryConfig",
+    "schedules.apps.SchedulesConfig",
 ]
 
 MIDDLEWARE = [
