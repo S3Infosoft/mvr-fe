@@ -196,7 +196,7 @@ class PasswordChangeViewTestCaseLoggedIn(TestCase):
         self.user.refresh_from_db()
 
         self.assertEquals(res.status_code, 302)
-        self.assertRedirects(res, reverse("password_change_done"))
+        self.assertRedirects(res, reverse("profile"))
         self.assertFalse(self.user.check_password(params["old_password"]))
         self.assertTrue(self.user.check_password(params["new_password1"]))
 

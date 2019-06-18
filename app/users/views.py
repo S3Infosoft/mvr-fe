@@ -76,6 +76,7 @@ class RegisterView(SuccessMessageMixin, generic.CreateView):
 
 class PasswordChangeView(SuccessMessageMixin, views.PasswordChangeView):
     success_message = "Your password has been successfully changed."
+    success_url = reverse_lazy("profile")
     
     def form_valid(self, form):
         email = self.request.user.email

@@ -5,8 +5,6 @@ from django.contrib.auth import views as auth_views
 from django.views.generic.base import RedirectView
 
 password_urls = [
-    path("change/done/", auth_views.PasswordChangeDoneView.as_view(),
-         name="password_change_done"),
     path("change/", views.PasswordChangeView.as_view(),
          name="password_change"),
     path("reset/done/", auth_views.PasswordResetDoneView.as_view(),
