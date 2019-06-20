@@ -2,9 +2,8 @@ from django.db import models
 from django.urls import reverse
 from django.contrib.auth import base_user, models as auth_models
 from django.utils.translation import ugettext_lazy as _
+from django.utils.timezone import now
 from django.core.files.base import ContentFile
-
-from copy import deepcopy
 
 from PIL import Image
 
@@ -46,16 +45,30 @@ class CustomUserManager(base_user.BaseUserManager):
         return self.create_user(email, password, **extra_fields)
 
 
+def save_image(instance, filename):
+    user_id = instance.id
+    extension = filename.rsplit(".", 1)[-1]
+    timestamp = str(now().date())
+    filename = f"{timestamp}.{extension}"
+    return "/".join(("profile", str(user_id), filename))
+
+
+def save_thumb(instance, filename):
+    user_id = instance.id
+    timestamp = str(now().date())
+    extension = filename.rsplit(".", 1)[-1]
+    filename = f"{timestamp}.{extension}"
+    return "/".join(("profile", str(user_id), "thumb", filename))
+
+
 class CustomUser(auth_models.AbstractUser):
     """
     CustomUser model with email and password for authentication
     """
     username = None
     email = models.EmailField(_("email address"), unique=True)
-    image = models.ImageField(upload_to="profile_pic/%Y/%m/",
-                              blank=True,
-                              null=True)
-    image_thumb = models.ImageField(upload_to="profile_pic/thumb/%Y/%m/",
+    image = models.ImageField(upload_to=save_image, blank=True, null=True)
+    image_thumb = models.ImageField(upload_to=save_thumb,
                                     blank=True,
                                     null=True)
 
