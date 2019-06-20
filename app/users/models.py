@@ -70,3 +70,42 @@ class CustomUser(auth_models.AbstractUser):
     @staticmethod
     def get_absolute_url():
         return reverse("profile")
+
+    def save(self, *args, **kwargs):
+        created = self._state.adding        # created or updated
+
+        if not created:
+
+            # Store the current image in image
+            image = self.image
+            if image:
+                image_name = image.name.rsplit("/", 1)[-1]
+
+                # Create a new image for thumbnail
+                thumb_image = ContentFile(image.read())
+
+                # Save the thumbnail but do not commit to the database
+                self.image_thumb.save(image_name, thumb_image, False)
+
+                # Save the model
+                super(CustomUser, self).save(*args, **kwargs)
+
+                # Get the thumbnail image from its path to resize it
+                thumb_image = Image.open(self.image.path)
+
+                if thumb_image.height > 140 or thumb_image.height > 140:
+                    output_size = (140, 140)
+                    thumb_image.thumbnail(output_size)
+
+                    # Save the resized image to its path
+                    thumb_image.save(self.image_thumb.path)
+        else:
+            super(CustomUser, self).save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        # Delete the user image or anything after object is deleted
+
+        if self.image:
+            self.image.delete(False)
+            self.image_thumb.delete(False)
+        super(CustomUser, self).delete(*args, **kwargs)
