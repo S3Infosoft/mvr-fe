@@ -115,7 +115,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = os.path.join(BASE_DIR, "static"),
-STATIC_ROOT = os.path.join(BASE_DIR, "static_root")
+STATIC_ROOT = "/vol/web/static_root/"
 
 AUTH_USER_MODEL = "users.CustomUser"
 
@@ -127,10 +127,7 @@ LOGOUT_REDIRECT_URL = "login"
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-LOG_DIR = "/LOGS"
-
-if not os.path.exists(LOG_DIR):
-    os.makedirs(LOG_DIR)
+LOG_DIR = "/vol/logs/"
 
 LOGGING = {
     "version": 1,
@@ -169,3 +166,6 @@ LOGGING = {
         },
     },
 }
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = "/vol/web/media/"
