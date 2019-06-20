@@ -16,7 +16,7 @@ class ProfileDetailUpdate(mixins.LoginRequiredMixin,
                           SuccessMessageMixin,
                           generic.UpdateView):
     model = get_user_model()
-    fields = "email", "first_name", "last_name",
+    fields = "email", "first_name", "last_name", "image",
     template_name = "users/profile.html"
     success_message = "Your profile has been successfully updated."
 
