@@ -2,6 +2,11 @@ from django.db import models
 from django.urls import reverse
 from django.contrib.auth import base_user, models as auth_models
 from django.utils.translation import ugettext_lazy as _
+from django.core.files.base import ContentFile
+
+from copy import deepcopy
+
+from PIL import Image
 
 
 class CustomUserManager(base_user.BaseUserManager):
@@ -47,6 +52,12 @@ class CustomUser(auth_models.AbstractUser):
     """
     username = None
     email = models.EmailField(_("email address"), unique=True)
+    image = models.ImageField(upload_to="profile_pic/%Y/%m/",
+                              blank=True,
+                              null=True)
+    image_thumb = models.ImageField(upload_to="profile_pic/thumb/%Y/%m/",
+                                    blank=True,
+                                    null=True)
 
     objects = CustomUserManager()
 

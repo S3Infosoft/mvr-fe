@@ -15,10 +15,14 @@ class CustomUserAdmin(UserAdmin):
                     "is_staff", "is_active",)
     list_filter = "is_staff", "is_active",
     list_editable = "is_staff", "is_active",
+    readonly_fields = "image_thumb",
 
     fieldsets = (
         (None, {"fields": ("email", "password")}),
-        (_("Personal Info"), {"fields": ("first_name", "last_name",)}),
+        (_("Personal Info"), {"fields": ("first_name",
+                                         "last_name",
+                                         "image",
+                                         "image_thumb",)}),
         (_("Permissons"), {"fields": ("is_staff",
                                       "is_active",
                                       "is_superuser",
