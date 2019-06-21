@@ -70,3 +70,25 @@ if (window.innerWidth > 768 && urlEndsWith(["/ota/", "/review/", "/partner/"], a
     divTag.addClass("show");
 
 }
+
+
+/**
+ * Function to fetch the table contents from the API and attach them to the table.
+ * @param {String} tableID - The table ID to attach the results
+ * @param {String} apiPathname - The API pathname to send GET request
+ * @param {Array} columns - The list of column names to attach data
+ */
+function fetchTableDataFromAPI(tableID, apiPathname, columns) {
+    console.log("Entered the calling function");
+    $.ajax({
+        url: address.origin + apiPathname,
+        method: "GET",
+        dataType: "json",
+        success: function(data) {
+            $(tableID).dataTable({
+                "aaData": data,
+                "columns": columns
+            });
+        }
+    })
+}
