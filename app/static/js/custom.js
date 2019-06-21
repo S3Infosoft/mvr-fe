@@ -1,5 +1,9 @@
 const address = window.location;
 
+
+/**
+Hide the Django message after 3 seconds.
+ */
 document.querySelectorAll("#messages").forEach(function(message) {
     setTimeout(function() {
         $(message).fadeOut("slow");
@@ -46,6 +50,12 @@ document.querySelectorAll("#messages").forEach(function(message) {
 // });
 
 
+/**
+ * Function to check whether the URL ends with any of the list contents
+ * @param {Array} suffixes - The suffixes to check
+ * @param {String} string - The string in which to check
+ * @returns {boolean}
+ */
 function urlEndsWith(suffixes, string) {
     return suffixes.some(function(suffix) {
         return string.endsWith(suffix);
@@ -53,7 +63,7 @@ function urlEndsWith(suffixes, string) {
 }
 
 
-if (urlEndsWith(["/ota/", "/review/", "/partner/"], address.pathname)) {
+if (window.innerWidth > 768 && urlEndsWith(["/ota/", "/review/", "/partner/"], address.pathname)) {
     const anchorTag = $(".nav-link.collapsed.admin");
     const divTag = $("#collapseAdmin");
     anchorTag.removeClass("collapsed");
