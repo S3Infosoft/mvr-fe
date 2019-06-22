@@ -94,10 +94,20 @@ function fetchTableDataFromAPI(tableID, apiPathname, columns) {
                 "order": [[0, "desc"]],
                 "columnDefs": [
                     {
+
+                        "targets": 1,
+                        "render": function(data, type, row) {
+                            let rowID = row["id"];
+
+                            return `<a href="${rowID}/">${data}</a>`
+                        },
+                    },
+
+                    {
                         "targets": [0],
                         "visible": false,
-                        "searchable":false
-                    }
+                        "search": false,
+                    },
                 ]
             });
         }
