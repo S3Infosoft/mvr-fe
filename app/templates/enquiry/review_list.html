@@ -29,7 +29,8 @@
         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
           <thead>
             <tr>
-              <th>Headlinw</th>
+              <th>ID</th>
+              <th>Headline</th>
               <th>Source</th>
               <th>Created</th>
               <th>Rating</th>
@@ -38,7 +39,8 @@
           </thead>
           <tfoot>
             <tr>
-              <th>Headlinw</th>
+              <th>ID</th>
+              <th>Headline</th>
               <th>Source</th>
               <th>Created</th>
               <th>Rating</th>
@@ -117,6 +119,7 @@
         const tableID = "#dataTable";
         const apiPathname = "{% url 'review-list' %}";
         const columns = [
+                      {"data": "id"},
                       {"data": "headline"},
                       {"data": "source"},
                       {"data": "created"},
