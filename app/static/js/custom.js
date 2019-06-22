@@ -61,7 +61,7 @@ $(document).ready(function() {
      */
     function urlEndsWith(suffixes, string) {
         return suffixes.some(function(suffix) {
-            return string.endsWith(suffix);
+            return string.endsWith(suffix) || string.includes(suffix);
         });
     }
 
