@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}{{ object.name }} :: {% endblock title %}
+
+{% block content %}
+  <div class="container">
+    <div class="card">
+      <div class="card-header">
+        <span class="text-dark">Name:</span> <span class="text-dark text-lg font-weight-bold">{{ object.name }}</span>
+      </div>
+      <div class="card-body text-dark">
+        Name: <span class="text-lg"> {{ object.name }}<br></span>
+        Partner Type: <span class="text-lg"> {{ object.partner_type }}<br></span>
+        Contact Person: <span class="text-lg"> {{ object.contact_person }}<br></span>
+        Contact Name: <span class="text-lg"> {{ object.contact_name }}<br></span>
+        Contact Email: <span class="text-lg"> {{ object.contact_email }}<br></span>
+      </div>
+    </div>
+      <div id="enquiryEdit" class="mt-3">
+        <div class="mb-3">
+          <button class="btn btn-success mr-auto" data-toggle="collapse" data-target="#enquiryUpdate" >Update</button>
+          <button class="btn btn-danger ml-2" data-toggle="collapse" data-target="#enquiryDelete" >Delete</button>
+        </div>
+      <div id="enquiryUpdate" class="collapse" data-parent="#enquiryEdit">
+        <form class="form" method="post" enctype="multipart/form-data">
+          <div class="row font-weight-bold">
+            {% csrf_token %}
+              <div class="col-6">
+                <div class="form-group mb-0 mt-n2">
+                  <label for="id_name" class="col-form-label text-dark font-weight-bold">Name:</label>
+                  {{ form.name }}
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="form-group mb-0 mt-n2">
+                  <label for="id_name" class="col-form-label text-dark font-weight-bold">Partner Type:</label>
+                  {{ form.partner_type }}
+                </div>
+              </div>
+
+              <div class="col-6">
+                <div class="form-group mb-0">
+                  <label for="id_contact_person" class="col-form-label text-dark font-weight-bold">Contact Person:</label>
+                  {{ form.contact_person }}
+                </div>
+              </div>
+
+            <div class="col-6">
+              <div class="form-group mb-0">
+                <label for="id_contact_name" class="col-form-label text-dark font-weight-bold">Contact Name:</label>
+                {{ form.contact_name }}
+              </div>
+            </div>
+            <div class="col-12">
+                 <label for="id_contact_email" class="col-form-label text-dark font-weight-bold">Contact Email:</label>
+                  {{ form.contact_email }}
+                </div>
+            </div>
+
+            <button class="btn btn-success mt-3" type="submit">Save Changes</button>
+        </form>
+      </div>
+
+      <div id="enquiryDelete" class="collapse" data-parent="#enquiryEdit">
+        <form method="post" action="{% url 'enquiry:partner_delete' object.id %}">
+          {% csrf_token %}
+          Sure to delete this Partner?
+          <button class="btn btn-danger ml-2">Yes! Delete</button>
+        </form>
+      </div>
+      </div>
+
+      </div>
+
+{% endblock content %}
