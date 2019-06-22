@@ -89,8 +89,53 @@ function fetchTableDataFromAPI(tableID, apiPathname, columns) {
         success: function(data) {
             $(tableID).dataTable({
                 "aaData": data,
-                "columns": columns
+                "aaSorting": [],    // disable the initial sorting
+                "columns": columns,
             });
         }
+    })
+}
+
+
+/**
+ * Add the newly created enquiry data to table
+ * @param {String} tableID - Table ID to attach the result
+ * @param {String} apiPathname - API pathname to send POST request
+ * @param {JSON} formData - Data to send to API
+ */
+function addNewEnquiryData(tableID, apiPathname, formData) {
+
+    $.ajax({
+        url: address.origin + apiPathname,
+        method: "POST",
+        data: formData,
+        dataType: "json",
+        success: function(data) {
+            console.log("Successfully created enquiry.");
+            let table = $(tableID).DataTable();
+            table.row.add(data).draw();
+        },
+        error: function(err) {
+            console.log(err);
+        }
+    })
+}
+
+
+/**
+ * Function to handle the form submission and clearing of form after AJAX
+ * @param {String} formID - Form ID to handle its submission
+ * @param {String} tableID - tableID - Table ID to attach the result
+ * @param {String} apiPathname - API pathname to send POST request
+ * @param {String} modalID - Modal ID too hide after submission
+ */
+function handleEnquiryFormSubmit(formID, tableID, apiPathname, modalID) {
+    $(formID).submit(function(e) {
+        e.preventDefault();
+        const this_ = $(this);
+        console.log("Creating enquiry.");
+        addNewEnquiryData(tableID, apiPathname, this_.serialize());
+        this_.trigger("reset");
+        $(modalID).modal("hide");
     })
 }
