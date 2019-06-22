@@ -12,8 +12,17 @@
 
   <!-- DataTales Example -->
   <div class="card shadow mb-4">
-    <div class="card-header py-3">
-      <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+    <div class="card-header py-2">
+      <h6 class="mt-2 font-weight-bold text-primary float-left">OTA Dataset</h6>
+      <button id="enquiry-btn"
+              class="btn btn-sm btn-primary btn-icon-split float-right"
+              data-toggle="modal"
+              data-target="#enquiryModal">
+        <span class="icon text-white-50">
+          <i class="fa fa-plus"></i>
+        </span>
+        <span class="text">Add OTA</span>
+      </button>
     </div>
     <div class="card-body">
       <div class="table-responsive">
@@ -41,20 +50,45 @@
     </div>
   </div>
 
-  <div class="modal fade" id="otaModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal fade" id="enquiryModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+          <h5 class="modal-title" id="exampleModalLabel">Add a new OTA</h5>
           <button class="close" type="button" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">×</span>
           </button>
         </div>
-        <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-        <div class="modal-footer">
-          <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-          <a class="btn btn-primary" href="{% url 'logout' %}">Logout</a>
-        </div>
+          <form id="enquiryForm" class="user" action="{% url 'ota-list' %}" method="post">
+          <div class="modal-body">
+            {% csrf_token %}
+              <div class="form-group mb-0 mt-n2">
+                <label for="id_name" class="col-form-label text-dark font-weight-bold">Name:</label>
+                {{ form.name }}
+              </div>
+
+             <div class="form-group mb-0">
+                <label for="id_contact_person" class="col-form-label text-dark font-weight-bold">Contact Person:</label>
+                {{ form.contact_person }}
+              </div>
+
+              <div class="form-group mb-0">
+                <label for="id_contact_name" class="col-form-label text-dark font-weight-bold">Contact Name:</label>
+                {{ form.contact_name }}
+              </div>
+
+               <div class="form-group mb-0">
+                  <label for="id_contact_email" class="col-form-label text-dark font-weight-bold">Contact Email:</label>
+                  {{ form.contact_email }}
+                </div>
+            <div class="modal-footer border-0">
+              <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+              <button id="enquiry-save" class="btn btn-success" type="submit">
+                Save
+              </button>
+            </div>
+          </div>
+          </form>
       </div>
     </div>
   </div>
@@ -79,6 +113,8 @@
                     {"data": "contact_name"},
                     {"data": "contact_email"},
                 ];
+      const modalID = "#enquiryModal";
+      const formID = "#enquiryForm";
 
       fetchTableDataFromAPI(tableID, apiPathname, columns);
 
@@ -104,6 +140,8 @@
               console.log(err.data)
           }
       });*/
+
+        handleEnquiryFormSubmit(formID, tableID, apiPathname, modalID);
     });
   </script>
 
