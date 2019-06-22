@@ -74,7 +74,6 @@ class ReviewForm(forms.ModelForm):
 
         self.fields["rating"].widget.attrs = {
             "class": "form-control",
-            "placeholder": "Enter Contact Name"
         }
 
         self.fields["description"].widget.attrs = {
@@ -85,6 +84,6 @@ class ReviewForm(forms.ModelForm):
 
         self.fields["action"].widget.attrs = {
             "class": "form-control",
-            "placeholder": "Enter Contact Email",
+            "placeholder": "Enter Action",
             "rows": 4,
         }
