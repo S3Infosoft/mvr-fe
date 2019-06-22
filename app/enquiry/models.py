@@ -45,11 +45,11 @@ class Partner(models.Model):
 
 class Review(models.Model):
     RATINGS = (
-        (1, "Worst"),
-        (2, "Poor"),
-        (3, "Average"),
-        (4, "Good"),
-        (5, "Excellent"),
+        (1.0, "Worst"),
+        (2.0, "Poor"),
+        (3.0, "Average"),
+        (4.0, "Good"),
+        (5.0, "Excellent"),
     )
     headline = models.CharField(max_length=250)
     source = models.CharField(max_length=250)
