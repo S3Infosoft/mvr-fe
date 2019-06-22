@@ -3,15 +3,29 @@ from django.urls import path, include
 
 app_name = "enquiry"
 
-jquery_links = [
-    path("ota/", views.ota_list, name="jquery-ota"),
-    path("partner/", views.partner_list, name="jquery-partner"),
-    path("review/", views.review_list, name="jquery-review"),
+ota_links = [
+    path("<int:pk>/delete/", views.OTADeleteView.as_view(), name="ota_delete"),
+    path("<int:pk>/", views.OTAUpdateView.as_view(), name="ota_detail"),
+    path("", views.ota_list, name="ota")
+]
+
+partner_links = [
+    path("<int:pk>/delete/", views.PartnerDeleteView.as_view(),
+         name="partner_delete"),
+    path("<int:pk>/", views.PartnerUpdateView.as_view(),
+         name="partner_detail"),
+    path("", views.partner_list, name="partner"),
+]
+
+review_links = [
+    path("<int:pk>/delete/", views.ReviewDeleteView.as_view(),
+         name="review_delete"),
+    path("<int:pk>/", views.ReviewUpdateView.as_view(), name="review_detail"),
+    path("", views.review_list, name="review"),
 ]
 
 urlpatterns = [
-    path("j/", include(jquery_links)),
-    path("ota/", views.ota_list, name="ota"),
-    path("partner/", views.partner_list, name="partner"),
-    path("review/", views.review_list, name="review"),
+    path("ota/", include(ota_links)),
+    path("partner/", include(partner_links)),
+    path("review/", include(review_links)),
 ]
