@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 
 
 class OTA(models.Model):
@@ -14,6 +15,9 @@ class OTA(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse("enquiry:ota_detail", args=[self.id])
 
 
 class Partner(models.Model):
@@ -34,6 +38,9 @@ class Partner(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse("enquiry:partner_detail", args=[self.id])
 
 
 class Review(models.Model):
@@ -57,3 +64,6 @@ class Review(models.Model):
 
     def __str__(self):
         return self.headline
+
+    def get_absolute_url(self):
+        return reverse("enquiry:review_detail", args=[self.id])
