@@ -92,6 +92,13 @@ function fetchTableDataFromAPI(tableID, apiPathname, columns) {
                 "aaSorting": [],    // disable the initial sorting
                 "columns": columns,
                 "order": [[0, "desc"]],
+                "columnDefs": [
+                    {
+                        "targets": [0],
+                        "visible": false,
+                        "searchable":false
+                    }
+                ]
             });
         }
     })
