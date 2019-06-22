@@ -9,6 +9,9 @@ class OTA(models.Model):
     contact_name = models.CharField(max_length=150)
     contact_email = models.EmailField()
 
+    class Meta:
+        ordering = "-id",
+
     def __str__(self):
         return self.name
 
@@ -25,6 +28,9 @@ class Partner(models.Model):
     contact_person = models.CharField(max_length=150)
     contact_name = models.CharField(max_length=150)
     contact_email = models.EmailField()
+
+    class Meta:
+        ordering = "-id",
 
     def __str__(self):
         return self.name
@@ -45,6 +51,9 @@ class Review(models.Model):
     rating = models.FloatField(choices=RATINGS)
     description = models.TextField()
     action = models.TextField()
+
+    class Meta:
+        ordering = "-id",
 
     def __str__(self):
         return self.headline
