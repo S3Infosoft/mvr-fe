@@ -1,0 +1,48 @@
+<html lang="en">
+  <head>
+    <title>{{ title }} Report</title>
+    <style>
+      table {
+        border-bottom: 1px solid lightgray;
+      }
+      thead {
+        font-size: 15px;
+      }
+      th {
+        padding-top: 2px;
+      }
+      tbody {
+        font-size: 12px;
+      }
+      td {
+        padding-top: 2px;
+        padding-left: 2px;
+        text-wrap: normal;
+      }
+    </style>
+  </head>
+  <body>
+    <table>
+      <thead>
+        <tr>
+          <th>Headline</th>
+          <th>Source</th>
+          <th>Created</th>
+          <th>Rating</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+       {% for object in objects %}
+          <tr>
+            <td>{{ object.headline }}</td>
+            <td>{{ object.source }}</td>
+            <td>{{ object.created }}</td>
+            <td>{{ object.get_rating_display }}</td>
+            <td>{{ object.action }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </body>
+</html>

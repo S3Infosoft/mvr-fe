@@ -1,0 +1,49 @@
+<html lang="en">
+  <head>
+    <title>{{ title }} Report</title>
+    <style>
+      table {
+        border-bottom: 1px solid lightgray;
+      }
+      thead {
+        font-size: 15px;
+      }
+      th {
+        padding-top: 2px;
+      }
+      tbody {
+        font-size: 12px;
+      }
+      td {
+        padding-top: 2px;
+        padding-left: 2px;
+        text-wrap: normal;
+      }
+    </style>
+  </head>
+
+  <body>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Registration</th>
+          <th>Contact Person</th>
+          <th>Contacasdt Name</th>
+          <th>Contact Email</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for object in objects %}
+          <tr>
+            <td>{{ object.name }}</td>
+            <td>{{ object.registration }}</td>
+            <td>{{ object.contact_person }}</td>
+            <td>{{ object.contact_name }}</td>
+            <td>{{ object.contact_email }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </body>
+</html>
