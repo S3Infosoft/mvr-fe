@@ -1,4 +1,4 @@
-from . import forms, models, resources
+from . import forms, models, resources, utils
 from .api import serializers
 
 from django.contrib import messages
@@ -53,6 +53,45 @@ def export_csv(request, s_day, s_month, s_year, e_day, e_month, e_year, model):
 
 
 @decorators.login_required
+def export_pdf(request, s_day, s_month, s_year, e_day, e_month, e_year, model):
+    if model == "OTA":
+        q = models.OTA.objects.filter(registration__day__gte=s_day,
+                                      registration__month__gte=s_month,
+                                      registration__year__gte=s_year,
+                                      registration__day__lte=e_day,
+                                      registration__month__lte=e_month,
+                                      registration__year__lte=e_year, )
+        template = "others/ota_pdf.html"
+    elif model == "PARTNER":
+        q = models.Partner.objects.filter(
+            created__day__gte=s_day,
+            created__month__gte=s_month,
+            created__year__gte=s_year,
+            created__day__lte=e_day,
+            created__month__lte=e_month,
+            created__year__lte=e_year,
+        )
+        template = "others/partner_pdf.html"
+    else:
+        q = models.Review.objects.filter(
+            created__day__gte=s_day,
+            created__month__gte=s_month,
+            created__year__gte=s_year,
+            created__day__lte=e_day,
+            created__month__lte=e_month,
+            created__year__lte=e_year,
+        )
+        template = "others/review_pdf.html"
+
+    name = model + "-".join([s_year, s_month, s_day, e_year, e_month, e_day])
+    pdf = utils.render_to_pdf(template, {"objects": q,
+                                         "title": model})
+    res = HttpResponse(pdf, content_type="text/pdf")
+    res["Content-Disposition"] = f"attachment; filename={name}.pdf"
+    return res
+
+
+@decorators.login_required
 def generate_report(request):
     if request.method == "POST":
         form = forms.ReportForm(data=request.POST)
@@ -61,9 +100,6 @@ def generate_report(request):
             enquiry = cd["enquiry_type"]
             start_date = datetime.date(cd["start_date"])
             end_date = datetime.date(cd["end_date"])
-            print()
-            print("start ==", start_date, "end == ", end_date)
-            print()
 
             if enquiry == "OTA":
                 queryset = models.OTA.objects.filter(
