@@ -16,37 +16,25 @@ from datetime import datetime
 
 @decorators.login_required
 def export_csv(request, s_day, s_month, s_year, e_day, e_month, e_year, model):
+    start_date = datetime(year=s_year, month=s_month, day=s_day)
+    end_date = datetime(year=e_year, month=e_month, day=e_day)
+
+    # pr is the import-export object for respective model
     if model == "OTA":
         pr = resources.OTAResource()
-        q = models.OTA.objects.filter(registration__day__gte=s_day,
-                                      registration__month__gte=s_month,
-                                      registration__year__gte=s_year,
-                                      registration__day__lte=e_day,
-                                      registration__month__lte=e_month,
-                                      registration__year__lte=e_year,)
+        q = models.OTA.objects.filter(registration__date__gte=start_date,
+                                      registration_date__lte=end_date)
     elif model == "PARTNER":
         pr = resources.PartnerResource()
-        q = models.Partner.objects.filter(
-            created__day__gte=s_day,
-            created__month__gte=s_month,
-            created__year__gte=s_year,
-            created__day__lte=e_day,
-            created__month__lte=e_month,
-            created__year__lte=e_year,
-        )
+        q = models.Partner.objects.filter(created__date__gte=start_date,
+                                          created__date__lte=end_date)
     else:
         pr = resources.ReviewResource()
-        q = models.Review.objects.filter(
-            created__day__gte=s_day,
-            created__month__gte=s_month,
-            created__year__gte=s_year,
-            created__day__lte=e_day,
-            created__month__lte=e_month,
-            created__year__lte=e_year,
-        )
+        q = models.Review.objects.filter(created__date__gte=start_date,
+                                         created__date__lte=end_date)
 
     csv = pr.export(q)
-    name = model + "-".join([s_year, s_month, s_day, e_year, e_month, e_day])
+    name = f"{model}-{start_date.date()} {end_date.date()}"
     res = HttpResponse(csv.csv, content_type="text/csv")
     res["Content-Disposition"] = f"attachment; filename={name}.csv"
     return res
@@ -54,36 +42,23 @@ def export_csv(request, s_day, s_month, s_year, e_day, e_month, e_year, model):
 
 @decorators.login_required
 def export_pdf(request, s_day, s_month, s_year, e_day, e_month, e_year, model):
+    start_date = datetime(year=s_year, month=s_month, day=s_day)
+    end_date = datetime(year=e_year, month=e_month, day=e_day)
+
     if model == "OTA":
-        q = models.OTA.objects.filter(registration__day__gte=s_day,
-                                      registration__month__gte=s_month,
-                                      registration__year__gte=s_year,
-                                      registration__day__lte=e_day,
-                                      registration__month__lte=e_month,
-                                      registration__year__lte=e_year, )
+        q = models.OTA.objects.filter(registration__date__gte=start_date,
+                                      registration_date__lte=end_date)
         template = "others/ota_pdf.html"
     elif model == "PARTNER":
-        q = models.Partner.objects.filter(
-            created__day__gte=s_day,
-            created__month__gte=s_month,
-            created__year__gte=s_year,
-            created__day__lte=e_day,
-            created__month__lte=e_month,
-            created__year__lte=e_year,
-        )
+        q = models.Partner.objects.filter(created__date__gte=start_date,
+                                          created__date__lte=end_date)
         template = "others/partner_pdf.html"
     else:
-        q = models.Review.objects.filter(
-            created__day__gte=s_day,
-            created__month__gte=s_month,
-            created__year__gte=s_year,
-            created__day__lte=e_day,
-            created__month__lte=e_month,
-            created__year__lte=e_year,
-        )
+        q = models.Review.objects.filter(created__date__gte=start_date,
+                                         created__date__lte=end_date)
         template = "others/review_pdf.html"
 
-    name = model + "-".join([s_year, s_month, s_day, e_year, e_month, e_day])
+    name = f"{model}-{start_date.date()} {end_date.date()}"
     pdf = utils.render_to_pdf(template, {"objects": q,
                                          "title": model})
     res = HttpResponse(pdf, content_type="text/pdf")
