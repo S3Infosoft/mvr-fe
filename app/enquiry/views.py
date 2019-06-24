@@ -1,16 +1,55 @@
-from . import forms, models
+from . import forms, models, resources
 from .api import serializers
 
 from django.contrib import messages
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.contrib.auth import decorators, mixins
+from django.http.response import HttpResponse
 from django.views.generic import UpdateView, DeleteView
 from django.contrib.messages.views import SuccessMessageMixin
 
 from rest_framework.renderers import JSONRenderer
 
 from datetime import datetime
+
+
+@decorators.login_required
+def export_csv(request, s_day, s_month, s_year, e_day, e_month, e_year, model):
+    if model == "OTA":
+        pr = resources.OTAResource()
+        q = models.OTA.objects.filter(registration__day__gte=s_day,
+                                      registration__month__gte=s_month,
+                                      registration__year__gte=s_year,
+                                      registration__day__lte=e_day,
+                                      registration__month__lte=e_month,
+                                      registration__year__lte=e_year,)
+    elif model == "PARTNER":
+        pr = resources.PartnerResource()
+        q = models.Partner.objects.filter(
+            created__day__gte=s_day,
+            created__month__gte=s_month,
+            created__year__gte=s_year,
+            created__day__lte=e_day,
+            created__month__lte=e_month,
+            created__year__lte=e_year,
+        )
+    else:
+        pr = resources.ReviewResource()
+        q = models.Review.objects.filter(
+            created__day__gte=s_day,
+            created__month__gte=s_month,
+            created__year__gte=s_year,
+            created__day__lte=e_day,
+            created__month__lte=e_month,
+            created__year__lte=e_year,
+        )
+
+    csv = pr.export(q)
+    name = model + "-".join([s_year, s_month, s_day, e_year, e_month, e_day])
+    res = HttpResponse(csv.csv, content_type="text/csv")
+    res["Content-Disposition"] = f"attachment; filename={name}.csv"
+    return res
 
 
 @decorators.login_required
@@ -22,6 +61,9 @@ def generate_report(request):
             enquiry = cd["enquiry_type"]
             start_date = datetime.date(cd["start_date"])
             end_date = datetime.date(cd["end_date"])
+            print()
+            print("start ==", start_date, "end == ", end_date)
+            print()
 
             if enquiry == "OTA":
                 queryset = models.OTA.objects.filter(

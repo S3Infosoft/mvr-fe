@@ -38,7 +38,7 @@
       <a id="enquiry-btn"
               class="btn btn-sm btn-primary btn-icon-split float-right mr-2"
 
-          href="#"
+          href="{% url 'enquiry:csv' start_date.day start_date.month start_date.year end_date.day end_date.month end_date.year type %}"
               >
         <span class="icon text-white-50">
           <i class="fa fa-file-csv"></i>
@@ -62,74 +62,76 @@
 {% endblock content %}
 
 {% block extra_script %}
-  <script src="{% static 'vendor/datatables/jquery.dataTables.min.js' %}"></script>
-  <script src="{% static 'vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
-  <script>
+  {% if result %}
+    <script src="{% static 'vendor/datatables/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+    <script>
 
-  const otaCol = [
-              {"data": "id"},
-              {"data": "name"},
-              {"data": "registration"},
-              {"data": "contact_person"},
-              {"data": "contact_name"},
-              {"data": "contact_email"},
-          ];
-  const partnerCol = [
-                      {"data": "id"},
-                      {"data": "name"},
-                      {"data": "partner_type"},
-                      {"data": "contact_person"},
-                      {"data": "contact_name"},
-                      {"data": "contact_email"},
-                  ];
-  const reviewCol = [
-                      {"data": "id"},
-                      {"data": "headline"},
-                      {"data": "source"},
-                      {"data": "created"},
-                      {"data": "rating"},
-                      {"data": "action"},
-                  ];
+    const otaCol = [
+                {"data": "id"},
+                {"data": "name"},
+                {"data": "registration"},
+                {"data": "contact_person"},
+                {"data": "contact_name"},
+                {"data": "contact_email"},
+            ];
+    const partnerCol = [
+                        {"data": "id"},
+                        {"data": "name"},
+                        {"data": "partner_type"},
+                        {"data": "contact_person"},
+                        {"data": "contact_name"},
+                        {"data": "contact_email"},
+                    ];
+    const reviewCol = [
+                        {"data": "id"},
+                        {"data": "headline"},
+                        {"data": "source"},
+                        {"data": "created"},
+                        {"data": "rating"},
+                        {"data": "action"},
+                    ];
 
-  $(document).ready(function() {
+    $(document).ready(function() {
 
-      let column = null;
+        let column = null;
 
-      if ("{{ type }}" === "OTA") {
-          column = otaCol;
-      } else if ("{{ type }}" === "PARTNER") {
-          column = partnerCol;
-      } else if ("{{ type }}" === "REVIEW") {
-          column = reviewCol;
-      }
+        if ("{{ type }}" === "OTA") {
+            column = otaCol;
+        } else if ("{{ type }}" === "PARTNER") {
+            column = partnerCol;
+        } else if ("{{ type }}" === "REVIEW") {
+            column = reviewCol;
+        }
 
 
-      $("#dataTable").dataTable({
-          "aaData": {{json|safe}},
-          "aaSorting": [],    // disable the initial sorting
-          "columns": column,
-          "order": [[0, "desc"]],
-          "columnDefs": [
-              {
+        $("#dataTable").dataTable({
+            "aaData": {{json|safe}},
+            "aaSorting": [],    // disable the initial sorting
+            "columns": column,
+            "order": [[0, "desc"]],
+            "columnDefs": [
+                {
 
-                  "targets": 1,
-                  "render": function(data, type, row) {
-                      let rowID = row["id"];
+                    "targets": 1,
+                    "render": function(data, type, row) {
+                        let rowID = row["id"];
 
-                      return `<a href="${rowID}/">${data}</a>`
-                  },
-              },
+                        return `<a href="${rowID}/">${data}</a>`
+                    },
+                },
 
-              {
-                  "targets": [0],
-                  "visible": false,
-                  "search": false,
-              },
-          ]
-      });
+                {
+                    "targets": [0],
+                    "visible": false,
+                    "search": false,
+                },
+            ]
+        });
 
-      $("")
+        $("")
 
-  });
-</script>
+    });
+  </script>
+  {% endif %}
 {% endblock extra_script %}
