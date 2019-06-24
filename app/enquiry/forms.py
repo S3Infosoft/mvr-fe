@@ -2,6 +2,18 @@ from . import models
 from django import forms
 
 
+class ReportForm(forms.Form):
+    ENQUIRIES = (
+        ("OTA", "OTA"),
+        ("PARTNER", "Partner"),
+        ("REVIEW", "Review"),
+    )
+
+    start_date = forms.DateTimeField(widget=forms.SelectDateWidget())
+    end_date = forms.DateTimeField(widget=forms.SelectDateWidget())
+    enquiry_type = forms.ChoiceField(choices=ENQUIRIES)
+
+
 class OTAForm(forms.ModelForm):
     class Meta:
         model = models.OTA
