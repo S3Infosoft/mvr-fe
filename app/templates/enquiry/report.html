@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Report :: {% endblock title %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'vendor/datatables/dataTables.bootstrap4.min.css' %}">
+{% endblock extra_css %}
+
+{% block content %}
+  {% if not result %}
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">Submit</button>
+    </form>
+  {% else %}
+  <div class="card shadow mb-4">
+    <div class="card-header py-2">
+      <h6 class="mt-2 text-lg font-weight-bold text-primary float-left">{{type}} Report</h6>
+      <button id="reportEmail"
+              class="btn btn-sm btn-dark btn-icon-split float-right mr-2"
+              data-toggle="modal"
+              data-target="#enquiryModal">
+        <span class="icon text-white-50">
+          <i class="fa fa-at"></i>
+        </span>
+        <span class="text">Email</span>
+      </button>
+      <a id="reportPDF"
+              class="btn btn-sm btn-primary btn-icon-split float-right mr-2"
+              href="#">
+        <span class="icon text-white-50">
+          <i class="fa fa-file-pdf"></i>
+        </span>
+        <span class="text">PDF</span>
+      </a>
+      <a id="enquiry-btn"
+              class="btn btn-sm btn-primary btn-icon-split float-right mr-2"
+
+          href="#"
+              >
+        <span class="icon text-white-50">
+          <i class="fa fa-file-csv"></i>
+        </span>
+        <span class="text">CSV</span>
+      </a>
+    </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          {% if type == "OTA" %}
+            {% include "snippets/ota_table.html" %}
+          {% elif type == "PARTNER" %}
+              {% include "snippets/partner_table.html" %}
+          {% elif type == "REVIEW" %}
+              {% include "snippets/review_table.html" %}
+          {% endif %}
+        </div>
+      </div>
+  </div>
+  {% endif %}
+{% endblock content %}
+
+{% block extra_script %}
+  <script src="{% static 'vendor/datatables/jquery.dataTables.min.js' %}"></script>
+  <script src="{% static 'vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+  <script>
+
+  const otaCol = [
+              {"data": "id"},
+              {"data": "name"},
+              {"data": "registration"},
+              {"data": "contact_person"},
+              {"data": "contact_name"},
+              {"data": "contact_email"},
+          ];
+  const partnerCol = [
+                      {"data": "id"},
+                      {"data": "name"},
+                      {"data": "partner_type"},
+                      {"data": "contact_person"},
+                      {"data": "contact_name"},
+                      {"data": "contact_email"},
+                  ];
+  const reviewCol = [
+                      {"data": "id"},
+                      {"data": "headline"},
+                      {"data": "source"},
+                      {"data": "created"},
+                      {"data": "rating"},
+                      {"data": "action"},
+                  ];
+
+  $(document).ready(function() {
+
+      let column = null;
+
+      if ("{{ type }}" === "OTA") {
+          column = otaCol;
+      } else if ("{{ type }}" === "PARTNER") {
+          column = partnerCol;
+      } else if ("{{ type }}" === "REVIEW") {
+          column = reviewCol;
+      }
+
+
+      $("#dataTable").dataTable({
+          "aaData": {{json|safe}},
+          "aaSorting": [],    // disable the initial sorting
+          "columns": column,
+          "order": [[0, "desc"]],
+          "columnDefs": [
+              {
+
+                  "targets": 1,
+                  "render": function(data, type, row) {
+                      let rowID = row["id"];
+
+                      return `<a href="${rowID}/">${data}</a>`
+                  },
+              },
+
+              {
+                  "targets": [0],
+                  "visible": false,
+                  "search": false,
+              },
+          ]
+      });
+
+      $("")
+
+  });
+</script>
+{% endblock extra_script %}

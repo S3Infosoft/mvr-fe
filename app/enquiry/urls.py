@@ -25,6 +25,7 @@ review_links = [
 ]
 
 urlpatterns = [
+    path("report/", views.generate_report, name="report"),
     path("ota/", include(ota_links)),
     path("partner/", include(partner_links)),
     path("review/", include(review_links)),

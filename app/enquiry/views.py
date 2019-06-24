@@ -1,4 +1,5 @@
 from . import forms, models
+from .api import serializers
 
 from django.contrib import messages
 from django.shortcuts import render
@@ -6,6 +7,67 @@ from django.urls import reverse_lazy
 from django.contrib.auth import decorators, mixins
 from django.views.generic import UpdateView, DeleteView
 from django.contrib.messages.views import SuccessMessageMixin
+
+from rest_framework.renderers import JSONRenderer
+
+from datetime import datetime
+
+
+@decorators.login_required
+def generate_report(request):
+    if request.method == "POST":
+        form = forms.ReportForm(data=request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            enquiry = cd["enquiry_type"]
+            start_date = datetime.date(cd["start_date"])
+            end_date = datetime.date(cd["end_date"])
+
+            if enquiry == "OTA":
+                queryset = models.OTA.objects.filter(
+                    registration__day__gte=start_date.day,
+                    registration__month__gte=start_date.month,
+                    registration__year__gte=start_date.year,
+                    registration__day__lte=end_date.day,
+                    registration__month__lte=end_date.month,
+                    registration__year__lte=end_date.year,
+
+                )
+                serializer = serializers.OTASerializer(queryset, many=True)
+            elif enquiry == "PARTNER":
+                queryset = models.Partner.objects.filter(
+                    created__day__gte=start_date.day,
+                    created__month__gte=start_date.month,
+                    created__year__gte=start_date.year,
+                    created__day__lte=end_date.day,
+                    created__month__lte=end_date.month,
+                    created__year__lte=end_date.year,
+                )
+                serializer = serializers.PartnerSerializer(queryset, many=True)
+            else:
+                queryset = models.Review.objects.filter(
+                    created__day__gte=start_date.day,
+                    created__month__gte=start_date.month,
+                    created__year__gte=start_date.year,
+                    created__day__lte=end_date.day,
+                    created__month__lte=end_date.month,
+                    created__year__lte=end_date.year,
+                )
+                serializer = serializers.ReviewSerializer(queryset, many=True)
+
+            json = JSONRenderer().render(serializer.data)
+            json = json.decode("utf-8")
+
+            return render(request, "enquiry/report.html",
+                          {"json": json,
+                           "type": enquiry,
+                           "result": True,
+                           "start_date": start_date,
+                           "end_date": end_date})
+    else:
+        form = forms.ReportForm()
+
+    return render(request, "enquiry/report.html", {"form": form})
 
 
 class DefaultRequirments(mixins.LoginRequiredMixin, SuccessMessageMixin):
