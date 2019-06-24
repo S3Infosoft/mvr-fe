@@ -101,41 +101,36 @@ def generate_report(request):
             start_date = datetime.date(cd["start_date"])
             end_date = datetime.date(cd["end_date"])
 
+            # Generating queryset and serializer on the type of data requested
+            # Serializer to send the data as json for Datatables.js
             if enquiry == "OTA":
                 queryset = models.OTA.objects.filter(
-                    registration__day__gte=start_date.day,
-                    registration__month__gte=start_date.month,
-                    registration__year__gte=start_date.year,
-                    registration__day__lte=end_date.day,
-                    registration__month__lte=end_date.month,
-                    registration__year__lte=end_date.year,
+                    registration__date__gte=start_date,
+                    registration__date__lte=end_date,
 
                 )
                 serializer = serializers.OTASerializer(queryset, many=True)
             elif enquiry == "PARTNER":
                 queryset = models.Partner.objects.filter(
-                    created__day__gte=start_date.day,
-                    created__month__gte=start_date.month,
-                    created__year__gte=start_date.year,
-                    created__day__lte=end_date.day,
-                    created__month__lte=end_date.month,
-                    created__year__lte=end_date.year,
+                    created__date__gte=start_date,
+                    created__date__lte=end_date,
                 )
                 serializer = serializers.PartnerSerializer(queryset, many=True)
             else:
                 queryset = models.Review.objects.filter(
-                    created__day__gte=start_date.day,
-                    created__month__gte=start_date.month,
-                    created__year__gte=start_date.year,
-                    created__day__lte=end_date.day,
-                    created__month__lte=end_date.month,
-                    created__year__lte=end_date.year,
+                    created__date__gte=start_date,
+                    created__date__lte=end_date,
                 )
                 serializer = serializers.ReviewSerializer(queryset, many=True)
 
+            # Converting the serializer to binary string
             json = JSONRenderer().render(serializer.data)
+
+            # Converting the binary to string to utf-8 to work in <script> tag.
             json = json.decode("utf-8")
 
+            # The result key is send to show remove the extra script on form
+            # page and remove the form after post request
             return render(request, "enquiry/report.html",
                           {"json": json,
                            "type": enquiry,
