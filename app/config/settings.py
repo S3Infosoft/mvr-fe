@@ -29,6 +29,7 @@ INSTALLED_APPS = [
 
     # Packages
     "rest_framework",
+    "import_export",
 
     # Apps
     "enquiry.apps.EnquiryConfig",
@@ -169,3 +170,5 @@ LOGGING = {
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = "/vol/web/media/"
+
+IMPORT_EXPORT_USE_TRANSACTIONS = True
