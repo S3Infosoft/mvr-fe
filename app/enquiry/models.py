@@ -32,6 +32,8 @@ class Partner(models.Model):
     contact_person = models.CharField(max_length=150)
     contact_name = models.CharField(max_length=150)
     contact_email = models.EmailField()
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = "-id",
