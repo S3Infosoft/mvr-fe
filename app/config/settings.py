@@ -39,9 +39,6 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    # django-debug-toolbar middleware
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
-
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -52,6 +49,8 @@ MIDDLEWARE = [
 
     # django-easy-audit middleware
     "easyaudit.middleware.easyaudit.EasyAuditMiddleware",
+    # django-debug-toolbar middleware
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -204,6 +203,7 @@ DEBUG_TOOLBAR_PANELS = [
     'debug_toolbar.panels.redirects.RedirectsPanel',
 ]
 
+# if DEBUG:
 DEBUG_TOOLBAR_CONFIG = {
     "SHOW_TOOLBAR_CALLBACK": lambda request: True
 }
