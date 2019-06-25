@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     # Packages
     "rest_framework",
     "import_export",
+    "easyaudit",
 
     # Apps
     "enquiry.apps.EnquiryConfig",
@@ -172,3 +173,7 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = "/vol/web/media/"
 
 IMPORT_EXPORT_USE_TRANSACTIONS = True
+
+DJANGO_EASY_AUDIT_WATCH_AUTH_EVENTS = False
+DJANGO_EASY_AUDIT_WATCH_REQUEST_EVENTS = False
+DJANGO_EASY_AUDIT_UNREGISTERED_CLASSES_EXTRA = ["users.CustomUser"]
