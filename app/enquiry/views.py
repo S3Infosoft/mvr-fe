@@ -2,6 +2,7 @@ from . import forms, models, resources, utils
 from .api import serializers
 
 from django.contrib import messages
+from django.core.cache import cache
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.contrib.auth import decorators, mixins
@@ -13,28 +14,47 @@ from rest_framework.renderers import JSONRenderer
 
 from datetime import datetime
 
+# cache key format <model name in uppercase>-<start-date>-<end-date>
+
 
 @decorators.login_required
 def export_csv(request, s_day, s_month, s_year, e_day, e_month, e_year, model):
-    start_date = datetime(year=s_year, month=s_month, day=s_day)
-    end_date = datetime(year=e_year, month=e_month, day=e_day)
+    start_date = datetime(year=s_year, month=s_month, day=s_day).date()
+    end_date = datetime(year=e_year, month=e_month, day=e_day).date()
 
-    # pr is the import-export object for respective model
-    if model == "OTA":
-        pr = resources.OTAResource()
-        q = models.OTA.objects.filter(registration__date__gte=start_date,
-                                      registration__date__lte=end_date)
-    elif model == "PARTNER":
-        pr = resources.PartnerResource()
-        q = models.Partner.objects.filter(created__date__gte=start_date,
-                                          created__date__lte=end_date)
+    # keys to get data from cache
+    key = f"{model}-{start_date}-{end_date}"
+
+    q = cache.get(key)
+
+    if not q:
+        # pr is the import-export object for respective model
+        if model == "OTA":
+            pr = resources.OTAResource()
+            q = models.OTA.objects.filter(registration__date__gte=start_date,
+                                          registration__date__lte=end_date)
+        elif model == "PARTNER":
+            pr = resources.PartnerResource()
+            q = models.Partner.objects.filter(created__date__gte=start_date,
+                                              created__date__lte=end_date)
+        else:
+            pr = resources.ReviewResource()
+            q = models.Review.objects.filter(created__date__gte=start_date,
+                                             created__date__lte=end_date)
+        cache.set(key, q)
     else:
-        pr = resources.ReviewResource()
-        q = models.Review.objects.filter(created__date__gte=start_date,
-                                         created__date__lte=end_date)
+        print()
+        print("Entered cache for csv")
+        print()
+        if model == "OTA":
+            pr = resources.OTAResource()
+        elif model == "PARTNER":
+            pr = resources.PartnerResource()
+        else:
+            pr = resources.ReviewResource()
 
     csv = pr.export(q)
-    name = f"{model}-{start_date.date()} {end_date.date()}"
+    name = f"{model}-{start_date} {end_date}"
     res = HttpResponse(csv.csv, content_type="text/csv")
     res["Content-Disposition"] = f"attachment; filename={name}.csv"
     return res
@@ -42,23 +62,41 @@ def export_csv(request, s_day, s_month, s_year, e_day, e_month, e_year, model):
 
 @decorators.login_required
 def export_pdf(request, s_day, s_month, s_year, e_day, e_month, e_year, model):
-    start_date = datetime(year=s_year, month=s_month, day=s_day)
-    end_date = datetime(year=e_year, month=e_month, day=e_day)
+    start_date = datetime(year=s_year, month=s_month, day=s_day).date()
+    end_date = datetime(year=e_year, month=e_month, day=e_day).date()
 
-    if model == "OTA":
-        q = models.OTA.objects.filter(registration__date__gte=start_date,
-                                      registration__date__lte=end_date)
-        template = "others/ota_pdf.html"
-    elif model == "PARTNER":
-        q = models.Partner.objects.filter(created__date__gte=start_date,
-                                          created__date__lte=end_date)
-        template = "others/partner_pdf.html"
+    # keys to get data from cache
+    key = f"{model}-{start_date}-{end_date}"
+
+    q = cache.get(key)
+
+    if not q:
+        if model == "OTA":
+            q = models.OTA.objects.filter(registration__date__gte=start_date,
+                                          registration__date__lte=end_date)
+            template = "others/ota_pdf.html"
+        elif model == "PARTNER":
+            q = models.Partner.objects.filter(created__date__gte=start_date,
+                                              created__date__lte=end_date)
+            template = "others/partner_pdf.html"
+        else:
+            q = models.Review.objects.filter(created__date__gte=start_date,
+                                             created__date__lte=end_date)
+            template = "others/review_pdf.html"
+
+        cache.set(key, q)
     else:
-        q = models.Review.objects.filter(created__date__gte=start_date,
-                                         created__date__lte=end_date)
-        template = "others/review_pdf.html"
+        print()
+        print("Enteered cache for pdf")
+        print()
+        if model == "OTA":
+            template = "others/ota_pdf.html"
+        elif model == "PARTNER":
+            template = "others/partner_pdf.html"
+        else:
+            template = "others/review_pdf.html"
 
-    name = f"{model}-{start_date.date()} {end_date.date()}"
+    name = f"{model}-{start_date} {end_date}"
     pdf = utils.render_to_pdf(template, {"objects": q,
                                          "title": model})
     res = HttpResponse(pdf, content_type="text/pdf")
@@ -76,27 +114,52 @@ def generate_report(request):
             start_date = datetime.date(cd["start_date"])
             end_date = datetime.date(cd["end_date"])
 
-            # Generating queryset and serializer on the type of data requested
-            # Serializer to send the data as json for Datatables.js
-            if enquiry == "OTA":
-                queryset = models.OTA.objects.filter(
-                    registration__date__gte=start_date,
-                    registration__date__lte=end_date,
+            # keys to get data from cache
+            key = f"{enquiry}-{start_date}-{end_date}"
 
-                )
-                serializer = serializers.OTASerializer(queryset, many=True)
-            elif enquiry == "PARTNER":
-                queryset = models.Partner.objects.filter(
-                    created__date__gte=start_date,
-                    created__date__lte=end_date,
-                )
-                serializer = serializers.PartnerSerializer(queryset, many=True)
+            # get the data from cache if present
+            queryset = cache.get(key)
+            if queryset:
+                print()
+                print("Entered cache")
+                print()
+                if enquiry == "OTA":
+                    serializer = serializers.OTASerializer(queryset, many=True)
+                elif enquiry == "PARTNER":
+                    serializer = serializers.PartnerSerializer(queryset,
+                                                               many=True)
+                else:
+                    serializer = serializers.ReviewSerializer(queryset,
+                                                              many=True)
             else:
-                queryset = models.Review.objects.filter(
-                    created__date__gte=start_date,
-                    created__date__lte=end_date,
-                )
-                serializer = serializers.ReviewSerializer(queryset, many=True)
+
+                # Generating queryset and serializer on the
+                # type of data requested
+                # Serializer to send the data as json for Datatables.js
+                if enquiry == "OTA":
+                    queryset = models.OTA.objects.filter(
+                        registration__date__gte=start_date,
+                        registration__date__lte=end_date,
+
+                    )
+                    serializer = serializers.OTASerializer(queryset, many=True)
+                elif enquiry == "PARTNER":
+                    queryset = models.Partner.objects.filter(
+                        created__date__gte=start_date,
+                        created__date__lte=end_date,
+                    )
+                    serializer = serializers.PartnerSerializer(queryset,
+                                                               many=True)
+                else:
+                    queryset = models.Review.objects.filter(
+                        created__date__gte=start_date,
+                        created__date__lte=end_date,
+                    )
+                    serializer = serializers.ReviewSerializer(queryset,
+                                                              many=True)
+
+                # set the queryset and serializer in cache
+                cache.set(key, queryset)
 
             # Converting the serializer to binary string
             json = JSONRenderer().render(serializer.data)

@@ -209,7 +209,7 @@ DEBUG_TOOLBAR_CONFIG = {
 }
 
 
-CACHES ={
+CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
         "TIMEOUT": 75,
