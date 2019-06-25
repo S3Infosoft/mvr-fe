@@ -207,3 +207,14 @@ DEBUG_TOOLBAR_PANELS = [
 DEBUG_TOOLBAR_CONFIG = {
     "SHOW_TOOLBAR_CALLBACK": lambda request: True
 }
+
+
+CACHES ={
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "TIMEOUT": 75,
+        "OPTIONS": {
+            "MAX_ENTRIES": 1000
+        }
+    }
+}
