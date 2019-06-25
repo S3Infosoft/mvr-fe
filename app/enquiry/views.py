@@ -43,9 +43,6 @@ def export_csv(request, s_day, s_month, s_year, e_day, e_month, e_year, model):
                                              created__date__lte=end_date)
         cache.set(key, q)
     else:
-        print()
-        print("Entered cache for csv")
-        print()
         if model == "OTA":
             pr = resources.OTAResource()
         elif model == "PARTNER":
@@ -86,9 +83,6 @@ def export_pdf(request, s_day, s_month, s_year, e_day, e_month, e_year, model):
 
         cache.set(key, q)
     else:
-        print()
-        print("Enteered cache for pdf")
-        print()
         if model == "OTA":
             template = "others/ota_pdf.html"
         elif model == "PARTNER":
@@ -120,9 +114,6 @@ def generate_report(request):
             # get the data from cache if present
             queryset = cache.get(key)
             if queryset:
-                print()
-                print("Entered cache")
-                print()
                 if enquiry == "OTA":
                     serializer = serializers.OTASerializer(queryset, many=True)
                 elif enquiry == "PARTNER":
