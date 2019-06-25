@@ -1,7 +1,13 @@
 from . import serializers, mixins
 from .. import models
 
-from rest_framework import viewsets
+from easyaudit.models import CRUDEvent
+from rest_framework.generics import ListAPIView
+
+
+class ActivityListAPIView(ListAPIView):
+    serializer_class = serializers.CRUDEventSerializer
+    queryset = CRUDEvent.objects.all()
 
 
 class OTAViewset(mixins.CRUDModelViewSetMixin):
