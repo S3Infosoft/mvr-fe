@@ -23,7 +23,7 @@ def export_csv(request, s_day, s_month, s_year, e_day, e_month, e_year, model):
     if model == "OTA":
         pr = resources.OTAResource()
         q = models.OTA.objects.filter(registration__date__gte=start_date,
-                                      registration_date__lte=end_date)
+                                      registration__date__lte=end_date)
     elif model == "PARTNER":
         pr = resources.PartnerResource()
         q = models.Partner.objects.filter(created__date__gte=start_date,
@@ -47,7 +47,7 @@ def export_pdf(request, s_day, s_month, s_year, e_day, e_month, e_year, model):
 
     if model == "OTA":
         q = models.OTA.objects.filter(registration__date__gte=start_date,
-                                      registration_date__lte=end_date)
+                                      registration__date__lte=end_date)
         template = "others/ota_pdf.html"
     elif model == "PARTNER":
         q = models.Partner.objects.filter(created__date__gte=start_date,
