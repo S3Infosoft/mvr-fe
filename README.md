@@ -1,5 +1,7 @@
-# mvr-fe
-Front End Application
+# mvr-insights
+Go To Application for all things at MVR
+
+[![Build Status](https://travis-ci.org/S3Infosoft/mvr-insights.svg?branch=master)](https://travis-ci.org/S3Infosoft/mvr-insights)
 
 ## Features
 - User authentication i.e Registration, Login and Logout
