@@ -1,16 +1,13 @@
 from . import forms, models, resources, utils
-from .api import serializers
 
 from django.contrib import messages
-from django.core.cache import cache
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.contrib.auth import decorators, mixins
+from django.core.cache import cache
 from django.http.response import HttpResponse
 from django.views.generic import UpdateView, DeleteView
 from django.contrib.messages.views import SuccessMessageMixin
-
-from rest_framework.renderers import JSONRenderer
 
 from datetime import datetime
 
@@ -100,75 +97,7 @@ def export_pdf(request, s_day, s_month, s_year, e_day, e_month, e_year, model):
 
 @decorators.login_required
 def generate_report(request):
-    if request.method == "POST":
-        form = forms.ReportForm(data=request.POST)
-        if form.is_valid():
-            cd = form.cleaned_data
-            enquiry = cd["enquiry_type"]
-            start_date = datetime.date(cd["start_date"])
-            end_date = datetime.date(cd["end_date"])
-
-            # keys to get data from cache
-            key = f"{enquiry}-{start_date}-{end_date}"
-
-            # get the data from cache if present
-            queryset = cache.get(key)
-            if queryset:
-                if enquiry == "OTA":
-                    serializer = serializers.OTASerializer(queryset, many=True)
-                elif enquiry == "PARTNER":
-                    serializer = serializers.PartnerSerializer(queryset,
-                                                               many=True)
-                else:
-                    serializer = serializers.ReviewSerializer(queryset,
-                                                              many=True)
-            else:
-
-                # Generating queryset and serializer on the
-                # type of data requested
-                # Serializer to send the data as json for Datatables.js
-                if enquiry == "OTA":
-                    queryset = models.OTA.objects.filter(
-                        registration__date__gte=start_date,
-                        registration__date__lte=end_date,
-
-                    )
-                    serializer = serializers.OTASerializer(queryset, many=True)
-                elif enquiry == "PARTNER":
-                    queryset = models.Partner.objects.filter(
-                        created__date__gte=start_date,
-                        created__date__lte=end_date,
-                    )
-                    serializer = serializers.PartnerSerializer(queryset,
-                                                               many=True)
-                else:
-                    queryset = models.Review.objects.filter(
-                        created__date__gte=start_date,
-                        created__date__lte=end_date,
-                    )
-                    serializer = serializers.ReviewSerializer(queryset,
-                                                              many=True)
-
-                # set the queryset and serializer in cache
-                cache.set(key, queryset)
-
-            # Converting the serializer to binary string
-            json = JSONRenderer().render(serializer.data)
-
-            # Converting the binary to string to utf-8 to work in <script> tag.
-            json = json.decode("utf-8")
-
-            # The result key is send to show remove the extra script on form
-            # page and remove the form after post request
-            return render(request, "enquiry/report.html",
-                          {"json": json,
-                           "type": enquiry,
-                           "result": True,
-                           "start_date": start_date,
-                           "end_date": end_date})
-    else:
-        form = forms.ReportForm()
-
+    form = forms.ReportForm()
     return render(request, "enquiry/report.html", {"form": form})
 
 
