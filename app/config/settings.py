@@ -133,7 +133,13 @@ LOGOUT_URL = "logout"
 LOGIN_REDIRECT_URL = "index"
 LOGOUT_REDIRECT_URL = "login"
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+with open("email.txt") as email:
+    EMAIL_HOST_USER = email.readline().strip()
+    EMAIL_HOST_PASSWORD = email.readline().strip()
 
 LOG_DIR = "/vol/logs/"
 
