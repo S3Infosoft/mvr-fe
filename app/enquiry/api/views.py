@@ -1,11 +1,92 @@
 from . import serializers, mixins
-from .. import models
+from .. import models, forms
 
+from datetime import datetime
+
+from django.urls import reverse
+from django.core.cache import cache
+
+from rest_framework import generics, views
+from rest_framework.response import Response
 from easyaudit.models import CRUDEvent
-from rest_framework.generics import ListAPIView
 
 
-class ActivityListAPIView(ListAPIView):
+class ReportAPIView(views.APIView):
+
+    def get(self, request, *args, **kwargs):
+        form = forms.ReportForm(request.GET)
+        if form.is_valid():
+            cd = form.cleaned_data
+            enquiry = cd["enquiry_type"]
+            start_date = datetime.date(cd["start_date"])
+            end_date = datetime.date(cd["end_date"])
+
+            # keys to get data from cache
+            key = f"{enquiry}-{start_date}-{end_date}"
+
+            # get the data from cache if present
+            queryset = cache.get(key)
+            if queryset:
+                if enquiry == "OTA":
+                    serializer = serializers.OTASerializer(queryset, many=True)
+                elif enquiry == "PARTNER":
+                    serializer = serializers.PartnerSerializer(queryset,
+                                                               many=True)
+                else:
+                    serializer = serializers.ReviewSerializer(queryset,
+                                                              many=True)
+            else:
+
+                # Generating queryset and serializer on the
+                # type of data requested
+                # Serializer to send the data as json for Datatables.js
+                if enquiry == "OTA":
+                    queryset = models.OTA.objects.filter(
+                        registration__date__gte=start_date,
+                        registration__date__lte=end_date,
+
+                    )
+                    serializer = serializers.OTASerializer(queryset, many=True)
+                elif enquiry == "PARTNER":
+                    queryset = models.Partner.objects.filter(
+                        created__date__gte=start_date,
+                        created__date__lte=end_date,
+                    )
+                    serializer = serializers.PartnerSerializer(queryset,
+                                                               many=True)
+                else:
+                    queryset = models.Review.objects.filter(
+                        created__date__gte=start_date,
+                        created__date__lte=end_date,
+                    )
+                    serializer = serializers.ReviewSerializer(queryset,
+                                                              many=True)
+
+                # set the queryset and serializer in cache
+                cache.set(key, queryset)
+
+            csv_url = reverse("enquiry:csv", args=[
+                start_date.day, start_date.month, start_date.year,
+                end_date.day, end_date.month, end_date.year,
+                enquiry,
+            ])
+            print(csv_url)
+
+            pdf_url = reverse("enquiry:pdf", args=[
+                start_date.day, start_date.month, start_date.year,
+                end_date.day, end_date.month, end_date.year,
+                enquiry,
+            ])
+
+            return Response({"data": serializer.data,
+                             "start_date": start_date,
+                             "end_date": end_date,
+                             "enquiry_type": enquiry,
+                             "csv_url": csv_url,
+                             "pdf_url": pdf_url}, status=200)
+
+
+class ActivityListAPIView(generics.ListAPIView):
     serializer_class = serializers.CRUDEventSerializer
     queryset = CRUDEvent.objects.all()
 

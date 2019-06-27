@@ -9,6 +9,7 @@ router.register("partner", views.PartnerSerializer)
 router.register("review", views.ReviewSerializer)
 
 urlpatterns = [
+    path("report/", views.ReportAPIView.as_view(), name="api_report"),
     path("activity/", views.ActivityListAPIView.as_view(),
          name="activity_log"),
     path("", include(router.urls)),

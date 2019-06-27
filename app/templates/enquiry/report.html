@@ -8,16 +8,16 @@
 {% endblock extra_css %}
 
 {% block content %}
-  {% if not result %}
+  <div id="reportFormDiv" class="">
     <form method="post">
       {% csrf_token %}
       {{ form.as_p }}
       <button type="submit">Submit</button>
     </form>
-  {% else %}
-  <div class="card shadow mb-4">
+  </div>
+  <div id="reportResult" class="card shadow mb-4 d-none">
     <div class="card-header py-2">
-      <h6 class="mt-2 text-lg font-weight-bold text-primary float-left">{{type}} Report</h6>
+      <h6 class="mt-2 text-lg font-weight-bold text-primary float-left"><span class="reportName"></span> Report <span class="reportDuration text-gray-500"></span> <button id="reportDurationBtn" class="btn btn-outline-secondary btn-sm">Change</button> </h6>
       <button id="reportEmail"
               class="btn btn-sm btn-dark btn-icon-split float-right mr-2"
               data-toggle="modal"
@@ -29,17 +29,16 @@
       </button>
       <a id="reportPDF"
               class="btn btn-sm btn-primary btn-icon-split float-right mr-2"
-              href="{% url 'enquiry:pdf' start_date.day start_date.month start_date.year end_date.day end_date.month end_date.year type %}">
+              href="#">
         <span class="icon text-white-50">
           <i class="fa fa-file-pdf"></i>
         </span>
         <span class="text">PDF</span>
       </a>
-      <a id="enquiry-btn"
+      <a id="reportCSV"
               class="btn btn-sm btn-primary btn-icon-split float-right mr-2"
 
-          href="{% url 'enquiry:csv' start_date.day start_date.month start_date.year end_date.day end_date.month end_date.year type %}"
-              >
+          href="#">
         <span class="icon text-white-50">
           <i class="fa fa-file-csv"></i>
         </span>
@@ -48,24 +47,51 @@
     </div>
       <div class="card-body">
         <div class="table-responsive">
-          {% if type == "OTA" %}
-            {% include "snippets/ota_table.html" %}
-          {% elif type == "PARTNER" %}
-              {% include "snippets/partner_table.html" %}
-          {% elif type == "REVIEW" %}
-              {% include "snippets/review_table.html" %}
-          {% endif %}
+
+        <div id="reportDivOTA" class="d-none">
+            {% include "snippets/ota_table.html" with tableID='dataTableOTA' %}
+        </div>
+
+        <div id="reportDivPARTNER" class="d-none">
+            {% include "snippets/partner_table.html" with tableID='dataTablePARTNER' %}
+        </div>
+
+        <div id="reportDivREVIEW" class="d-none">
+            {% include "snippets/review_table.html" with tableID='dataTableREVIEW' %}
+        </div>
+
         </div>
       </div>
   </div>
-  {% endif %}
+  <div id="reportError" class="d-none"></div>
 {% endblock content %}
 
 {% block extra_script %}
-  {% if result %}
     <script src="{% static 'vendor/datatables/jquery.dataTables.min.js' %}"></script>
     <script src="{% static 'vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
     <script>
+
+    const pdfID = "#reportPDF";
+    const csvID = "#reportCSV";
+
+    // Variable to set the reportResultDiv to previous state
+    const reportDivClone = $("#reportResult").clone();
+
+    const reportFormDiv = "#reportFormDiv";
+    const reportResultDiv = "#reportResult";
+    const reportErrorDiv = "#reportError";
+
+    let reportTableID = {
+        "OTA": "#dataTableOTA",
+        "PARTNER": "#dataTablePARTNER",
+        "REVIEW": "#dataTableREVIEW",
+    };
+
+    let reportTableDiv = {
+        "OTA": "#reportDivOTA",
+        "PARTNER": "#reportDivPARTNER",
+        "REVIEW": "#reportDivREVIEW",
+    };
 
     const otaCol = [
                 {"data": "id"},
@@ -92,46 +118,87 @@
                         {"data": "action"},
                     ];
 
+    let columns = {
+        "OTA": otaCol,
+        "PARTNER": partnerCol,
+        "REVIEW": reviewCol,
+    };
+
     $(document).ready(function() {
 
-        let column = null;
+        let table = null;
 
-        if ("{{ type }}" === "OTA") {
-            column = otaCol;
-        } else if ("{{ type }}" === "PARTNER") {
-            column = partnerCol;
-        } else if ("{{ type }}" === "REVIEW") {
-            column = reviewCol;
+        let reportGetURL = "{% url 'api_report' %}";
+
+        function buildTable(data, tableID, column) {
+            table = $(tableID).dataTable({
+                "aaData": data,
+                "aaSorting": [],    // disable the initial sorting
+                "columns": column,
+                "order": [[0, "desc"]],
+                "columnDefs": [
+                    {
+
+                        "targets": 1,
+                        "render": function(data, type, row) {
+                            let rowID = row["id"];
+
+                            return `<a href="${rowID}/">${data}</a>`
+                        },
+                    },
+
+                    {
+                        "targets": [0],
+                        "visible": false,
+                        "search": false,
+                    },
+                ]
+            });
+
+            return table
         }
 
+        $("form").submit(function(e) {
+            e.preventDefault();
+            console.log("report requested");
+            const this_ = $(this);
 
-        $("#dataTable").dataTable({
-            "aaData": {{json|safe}},
-            "aaSorting": [],    // disable the initial sorting
-            "columns": column,
-            "order": [[0, "desc"]],
-            "columnDefs": [
-                {
+            $.ajax({
+                url: address.origin + reportGetURL,
+                method: "GET",
+                dataType: "json",
+                data: this_.serialize(),
+                success: function(data) {
+                    table = buildTable(data.data,
+                               reportTableID[data.enquiry_type],
+                               columns[data.enquiry_type]);
 
-                    "targets": 1,
-                    "render": function(data, type, row) {
-                        let rowID = row["id"];
-
-                        return `<a href="${rowID}/">${data}</a>`
-                    },
+                    $(reportFormDiv).addClass("d-none");
+                    $(".reportName").text(data.enquiry_type);
+                    $(pdfID).attr("href", data.pdf_url);
+                    $(csvID).attr("href", data.csv_url);
+                    $(".reportDuration").text(`[${data.start_date} to ${data.end_date}]`);
+                    $(reportResultDiv).removeClass("d-none");
+                    $(reportTableDiv[data.enquiry_type]).removeClass("d-none")
                 },
-
-                {
-                    "targets": [0],
-                    "visible": false,
-                    "search": false,
-                },
-            ]
+                error: function(err) {
+                    console.log(err);
+                }
+            })
         });
 
-        $("")
+
+        function reset() {
+            console.log("entereed reset");
+            $(reportResultDiv).replaceWith(reportDivClone.clone());
+            $(reportFormDiv).removeClass("d-none")
+        }
+
+        $(document.body).on("click", "#reportDurationBtn", function(e) {
+            console.log("reset clicked");
+            reset();
+        });
 
     });
-  </script>
-  {% endif %}
+    </script>
 {% endblock extra_script %}
