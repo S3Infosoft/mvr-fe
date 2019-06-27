@@ -70,9 +70,14 @@ class ReportAPIView(views.APIView):
                 end_date.day, end_date.month, end_date.year,
                 enquiry,
             ])
-            print(csv_url)
 
             pdf_url = reverse("enquiry:pdf", args=[
+                start_date.day, start_date.month, start_date.year,
+                end_date.day, end_date.month, end_date.year,
+                enquiry,
+            ])
+
+            email_url = reverse("enquiry:report_email", args=[
                 start_date.day, start_date.month, start_date.year,
                 end_date.day, end_date.month, end_date.year,
                 enquiry,
@@ -83,7 +88,8 @@ class ReportAPIView(views.APIView):
                              "end_date": end_date,
                              "enquiry_type": enquiry,
                              "csv_url": csv_url,
-                             "pdf_url": pdf_url}, status=200)
+                             "pdf_url": pdf_url,
+                             "email_url": email_url}, status=200)
 
 
 class ActivityListAPIView(generics.ListAPIView):
