@@ -1,6 +1,6 @@
 <html lang="en">
   <head>
-    <title>{{ title }} Report</title>
+    <title>{{ title }} Report [{{ start_date }} to {{ end_date }}]</title>
     <style>
       table {
         border-bottom: 1px solid lightgray;
@@ -23,13 +23,14 @@
   </head>
 
   <body>
+    <h2 align="center">{{ title }} Report [{{ start_date }} to {{ end_date }}]</h2>
     <table>
       <thead>
         <tr>
           <th>Name</th>
           <th>Registration</th>
           <th>Contact Person</th>
-          <th>Contacasdt Name</th>
+          <th>Contact Name</th>
           <th>Contact Email</th>
         </tr>
       </thead>

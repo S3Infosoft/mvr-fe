@@ -89,7 +89,9 @@ def export_pdf(request, s_day, s_month, s_year, e_day, e_month, e_year, model):
 
     name = f"{model}-{start_date} {end_date}"
     pdf = utils.render_to_pdf(template, {"objects": q,
-                                         "title": model})
+                                         "title": model,
+                                         "start_date": start_date,
+                                         "end_date": end_date})
     res = HttpResponse(pdf, content_type="text/pdf")
     res["Content-Disposition"] = f"attachment; filename={name}.pdf"
     return res
