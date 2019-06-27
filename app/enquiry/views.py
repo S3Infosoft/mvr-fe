@@ -5,7 +5,8 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.contrib.auth import decorators, mixins
 from django.core.cache import cache
-from django.http.response import HttpResponse
+from django.core.mail import EmailMessage
+from django.http.response import HttpResponse, HttpResponseRedirect
 from django.views.generic import UpdateView, DeleteView
 from django.contrib.messages.views import SuccessMessageMixin
 
@@ -14,10 +15,9 @@ from datetime import datetime
 # cache key format <model name in uppercase>-<start-date>-<end-date>
 
 
-@decorators.login_required
-def export_csv(request, s_day, s_month, s_year, e_day, e_month, e_year, model):
-    start_date = datetime(year=s_year, month=s_month, day=s_day).date()
-    end_date = datetime(year=e_year, month=e_month, day=e_day).date()
+def generate_csv(start_date: datetime.date,
+                 end_date: datetime.date,
+                 model: str):
 
     # keys to get data from cache
     key = f"{model}-{start_date}-{end_date}"
@@ -48,18 +48,12 @@ def export_csv(request, s_day, s_month, s_year, e_day, e_month, e_year, model):
             pr = resources.ReviewResource()
 
     csv = pr.export(q)
-    name = f"{model}-{start_date} {end_date}"
-    res = HttpResponse(csv.csv, content_type="text/csv")
-    res["Content-Disposition"] = f"attachment; filename={name}.csv"
-    return res
+    return csv
 
 
-@decorators.login_required
-def export_pdf(request, s_day, s_month, s_year, e_day, e_month, e_year, model):
-    start_date = datetime(year=s_year, month=s_month, day=s_day).date()
-    end_date = datetime(year=e_year, month=e_month, day=e_day).date()
-
-    # keys to get data from cache
+def generate_pdf(start_date: datetime.date,
+                 end_date: datetime.date,
+                 model: str):
     key = f"{model}-{start_date}-{end_date}"
 
     q = cache.get(key)
@@ -87,12 +81,77 @@ def export_pdf(request, s_day, s_month, s_year, e_day, e_month, e_year, model):
         else:
             template = "others/review_pdf.html"
 
-    name = f"{model}-{start_date} {end_date}"
     pdf = utils.render_to_pdf(template, {"objects": q,
                                          "title": model,
                                          "start_date": start_date,
                                          "end_date": end_date})
-    res = HttpResponse(pdf, content_type="text/pdf")
+    return pdf
+
+
+@decorators.login_required
+def send_report_email(request, s_day, s_month, s_year,
+                      e_day, e_month, e_year, model):
+    start_date = datetime(year=s_year, month=s_month, day=s_day).date()
+    end_date = datetime(year=e_year, month=e_month, day=e_day).date()
+
+    if request.method == "POST":
+        print("started")
+        form = forms.ReportEmailForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            subject = cd["subject"]
+            message = cd["message"]
+            sender = request.user.email
+            recipient = cd["to"]
+
+            email = EmailMessage(
+                subject,
+                message,
+                sender,
+                [recipient])
+
+            csv = generate_csv(start_date, end_date, model)
+            pdf = generate_pdf(start_date, end_date, model)
+
+            name = f"{model}-{start_date} {end_date}"
+
+            email.attach(f"{name}.csv",
+                         csv.csv,
+                         "text/csv")
+            email.attach(f"{name}.pdf",
+                         pdf.getvalue(),
+                         "text/pdf")
+            email.send()
+
+            return HttpResponseRedirect(reverse_lazy("enquiry:report"))
+        else:
+            print(form.errors)
+
+    return HttpResponse("Error in email sending.")
+
+
+@decorators.login_required
+def export_csv(request, s_day, s_month, s_year, e_day, e_month, e_year, model):
+    start_date = datetime(year=s_year, month=s_month, day=s_day).date()
+    end_date = datetime(year=e_year, month=e_month, day=e_day).date()
+
+    csv = generate_csv(start_date, end_date, model)
+
+    name = f"{model}-{start_date} {end_date}"
+    res = HttpResponse(csv.csv, content_type="text/csv")
+    res["Content-Disposition"] = f"attachment; filename={name}.csv"
+    return res
+
+
+@decorators.login_required
+def export_pdf(request, s_day, s_month, s_year, e_day, e_month, e_year, model):
+    start_date = datetime(year=s_year, month=s_month, day=s_day).date()
+    end_date = datetime(year=e_year, month=e_month, day=e_day).date()
+
+    pdf = generate_pdf(start_date, end_date, model)
+
+    name = f"{model}-{start_date} {end_date}"
+    res = HttpResponse(pdf.getvalue(), content_type="text/pdf")
     res["Content-Disposition"] = f"attachment; filename={name}.pdf"
     return res
 
@@ -100,7 +159,9 @@ def export_pdf(request, s_day, s_month, s_year, e_day, e_month, e_year, model):
 @decorators.login_required
 def generate_report(request):
     form = forms.ReportForm()
-    return render(request, "enquiry/report.html", {"form": form})
+    email_form = forms.ReportEmailForm()
+    return render(request, "enquiry/report.html", {"form": form,
+                                                   "email_form": email_form})
 
 
 class DefaultRequirments(mixins.LoginRequiredMixin, SuccessMessageMixin):
