@@ -42,12 +42,22 @@
                 <a id="partners-link" class="collapse-item" href="{% url 'enquiry:partner' %}">Partners</a>
                 <a id="review-link" class="collapse-item" href="{% url 'enquiry:review' %}">Review</a>
             </div>
-
-            <div class="bg-white py-2 collapse-inner rounded">
-              <a id="ota-link" class="collapse-item" href="{% url 'enquiry:report' %}">Report</a>
-            </div>
           </div>
         </li>
+
+        <li class="nav-item">
+          <a class="nav-link collapsed admin" href="#" data-toggle="collapse" data-target="#collapseReport" aria-expanded="true" aria-controls="collapsePages">
+            <i class="fas fa-fw fa-folder"></i>
+            <span>Reports</span>
+          </a>
+          <div id="collapseReport" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a id="ota-link" class="collapse-item" href="{% url 'enquiry:report' %}">
+                  Generate Report
+                </a>
+
+            </div>
+          </div>
 
         <li class="nav-item">
           <a class="nav-link collapsed runs" href="#" data-toggle="collapse" data-target="#collapseRun" aria-expanded="true" aria-controls="collapsePages">
