@@ -5,7 +5,7 @@ from activities.forms import ReportForm
 from django.urls import reverse
 from django.core.cache import cache
 
-from rest_framework import generics, views
+from rest_framework import generics, views, status
 from rest_framework.response import Response
 
 from easyaudit.models import CRUDEvent
@@ -94,6 +94,8 @@ class ReportAPIView(views.APIView):
                              "csv_url": csv_url,
                              "pdf_url": pdf_url,
                              "email_url": email_url}, status=200)
+        else:
+            return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ActivityListAPIView(generics.ListAPIView):
