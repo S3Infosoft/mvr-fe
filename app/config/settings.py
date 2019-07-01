@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     # Apps
     "enquiry.apps.EnquiryConfig",
     "schedules.apps.SchedulesConfig",
+    "activities.apps.ActivitiesConfig",
 ]
 
 MIDDLEWARE = [
