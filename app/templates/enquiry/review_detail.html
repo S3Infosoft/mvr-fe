@@ -21,7 +21,7 @@
           <button class="btn btn-success mr-auto" data-toggle="collapse" data-target="#enquiryUpdate" >Update</button>
           <button class="btn btn-danger ml-2" data-toggle="collapse" data-target="#enquiryDelete" >Delete</button>
         </div>
-      <div id="enquiryUpdate" class="collapse" data-parent="#enquiryEdit">
+      <div id="enquiryUpdate" class="collapse {% if form.errors %}show alert alert-danger{% endif %}" data-parent="#enquiryEdit">
         <form class="form" method="post" enctype="multipart/form-data">
           <div class="row font-weight-bold">
             {% csrf_token %}
@@ -29,22 +29,41 @@
                 <div class="form-group mb-0 mt-n2">
                   <label for="id_name" class="col-form-label text-dark font-weight-bold">Headline:</label>
                   {{ form.headline }}
+                  <div class="text-danger">
+                    {{ form.headline.errors }}
+                  </div>
                 </div>
               </div>
               <div class="col-6">
                 <div class="form-group mb-0">
                   <label for="id_contact_person" class="col-form-label text-dark font-weight-bold">Source:</label>
                   {{ form.source }}
+                  <div class="text-danger">
+                    {{ form.source.errors }}
+                  </div>
                 </div>
               </div>
 
             <div class="col-12">
                <label for="id_contact_email" class="col-form-label text-dark font-weight-bold">Rating:</label>
                 {{ form.rating }}
+              <div class="text-danger">
+                {{ form.rating.errors }}
+              </div>
+            </div>
+            <div class="col-12">
+               <label for="id_description" class="col-form-label text-dark font-weight-bold">Description:</label>
+                {{ form.description }}
+                <div class="text-danger">
+                  {{ form.description.errors }}
+                </div>
             </div>
             <div class="col-12">
                <label for="id_contact_email" class="col-form-label text-dark font-weight-bold">Action:</label>
                 {{ form.action }}
+              <div class="text-danger">
+                {{ form.action.errors }}
+              </div>
             </div>
           </div>
 
