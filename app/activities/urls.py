@@ -14,4 +14,5 @@ urlpatterns = [
          "<int:e_month>/<int:e_year>/<str:model>/",
          views.send_report_email, name="report_email"),
     path("report/", views.generate_report, name="report"),
+    path("log/", views.activity_log, name="activity-log")
 ]

@@ -10,6 +10,11 @@ from datetime import datetime
 
 
 @decorators.login_required
+def activity_log(request):
+    return render(request, "schedules/activity_log.html")
+
+
+@decorators.login_required
 def send_report_email(request, s_day, s_month, s_year,
                       e_day, e_month, e_year, model):
     start_date = datetime(year=s_year, month=s_month, day=s_day).date()
