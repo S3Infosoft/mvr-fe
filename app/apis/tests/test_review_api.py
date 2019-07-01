@@ -1,5 +1,5 @@
-from ..models import Review
-from ..api.serializers import ReviewSerializer
+from ..serializers import ReviewSerializer
+from enquiry.models import Review
 
 from django.test import TestCase
 from django.urls import reverse

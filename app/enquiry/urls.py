@@ -25,16 +25,6 @@ review_links = [
 ]
 
 urlpatterns = [
-    path("csv/<int:s_day>/<int:s_month>/<int:s_year>/<int:e_day>/"
-         "<int:e_month>/<int:e_year>/<str:model>/",
-         views.export_csv, name="csv"),
-    path("pdf/<int:s_day>/<int:s_month>/<int:s_year>/<int:e_day>/"
-         "<int:e_month>/<int:e_year>/<str:model>/",
-         views.export_pdf, name="pdf"),
-    path("report/email/<int:s_day>/<int:s_month>/<int:s_year>/<int:e_day>/"
-         "<int:e_month>/<int:e_year>/<str:model>/",
-         views.send_report_email, name="report_email"),
-    path("report/", views.generate_report, name="report"),
     path("ota/", include(ota_links)),
     path("partner/", include(partner_links)),
     path("review/", include(review_links)),

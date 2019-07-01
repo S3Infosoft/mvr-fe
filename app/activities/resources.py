@@ -1,5 +1,5 @@
+from enquiry import models
 from import_export import resources
-from . import models
 
 
 class OTAResource(resources.ModelResource):
