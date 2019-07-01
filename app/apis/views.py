@@ -10,8 +10,6 @@ from rest_framework.response import Response
 
 from easyaudit.models import CRUDEvent
 
-from datetime import datetime
-
 
 class ReportAPIView(views.APIView):
 
@@ -21,8 +19,8 @@ class ReportAPIView(views.APIView):
         if form.is_valid():
             cd = form.cleaned_data
             enquiry = cd["enquiry_type"]
-            start_date = datetime.date(cd["start_date"])
-            end_date = datetime.date(cd["end_date"])
+            start_date = cd["start_date"]
+            end_date = cd["end_date"]
 
             # keys to get data from cache
             key = f"{enquiry}-{start_date}-{end_date}"
