@@ -1,10 +1,19 @@
 from django import forms
 
+DATE_FORMAT = "%d/%m/%Y"
+
 
 class ReportEmailForm(forms.Form):
-    subject = forms.CharField(max_length=250)
-    message = forms.CharField(widget=forms.Textarea())
-    to = forms.EmailField()
+    subject = forms.CharField(max_length=250,
+                              widget=forms.TextInput(
+                                  attrs={"class": "form-control"}
+                              ))
+    message = forms.CharField(widget=forms.Textarea(
+        attrs={"class": "form-control"}
+    ))
+    to = forms.EmailField(widget=forms.EmailInput(
+        attrs={"class": "form-control"})
+    )
 
 
 class ReportForm(forms.Form):
@@ -14,6 +23,18 @@ class ReportForm(forms.Form):
         ("REVIEW", "Review"),
     )
 
-    start_date = forms.DateTimeField(widget=forms.SelectDateWidget())
-    end_date = forms.DateTimeField(widget=forms.SelectDateWidget())
-    enquiry_type = forms.ChoiceField(choices=ENQUIRIES)
+    start_date = forms.DateField(widget=forms.DateInput(
+        attrs={
+            "class": "form-control",
+            "type": "date"
+        },
+    ))
+    end_date = forms.DateField(widget=forms.DateInput(
+        attrs={
+            "class": "form-control",
+            "type": "date"
+        },
+    ))
+    enquiry_type = forms.ChoiceField(choices=ENQUIRIES, widget=forms.Select(
+        attrs={"class": "form-control"}
+    ))
