@@ -28,14 +28,24 @@ class OTASerializer(serializers.ModelSerializer):
 
 
 class PartnerSerializer(serializers.ModelSerializer):
+    partner_type_display = serializers.SerializerMethodField()
 
     class Meta:
         model = enq_models.Partner
         fields = "__all__"
 
+    @staticmethod
+    def get_partner_type_display(obj):
+        return obj.get_partner_type_display()
+
 
 class ReviewSerializer(serializers.ModelSerializer):
+    rating_display = serializers.SerializerMethodField()
 
     class Meta:
         model = enq_models.Review
         fields = "__all__"
+
+    @staticmethod
+    def get_rating_display(obj):
+        return obj.get_rating_display()
