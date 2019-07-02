@@ -157,3 +157,81 @@ function handleEnquiryFormSubmit(formID, tableID, apiPathname, modalID) {
         $(modalID).modal("hide");
     })
 }
+
+
+/**
+ * Function to fetch the single instance of enquiry model from API
+ * @param {String} fetch_url - URL to send GET request.
+ * @param {Array} attachLocations - HTML elements on the page to attach data.
+ * @param {Array} attachSequence - Sequence in which to attach the data.
+ */
+function fetchEnquiryInstanceData(fetch_url, attachLocations, attachSequence) {
+    $.ajax({
+        url: fetch_url,
+        method: "GET",
+        data: [],
+        dataType: "json",
+        success: data => {
+            console.log("Data for a single instance of a enquiry model");
+            for(let i=0; i<= attachLocations.length; i++) {
+                $(attachLocations[i]).text(data[attachSequence[i]]);
+            }
+        },
+        error: err => console.log(err),
+    });
+}
+
+
+/**
+ * Function to handle the updation and deletion of enquiry objects
+ * @param {Object} instance - It is 'this' value of the form.
+ * @param {Boolean} updation - If it is a updation.
+ * @param {Boolean} deletion - If it is a deletion.
+ *
+ *
+ * attachLocation, dataAttachSequence and afterDeleteURL are taken from the previous scope of the page.
+ */
+function objectUpdateDelete(instance, updation=false, deletion=false) {
+    let data = null;
+    let method = null;
+
+    if (updation && !deletion) {
+        data = instance.serialize();
+        method = "PUT";
+    } else if (deletion && !updation) {
+        method = "DELETE";
+
+    }
+
+    const csrf = instance.find('[name="csrfmiddlewaretoken"').attr("value");
+
+    $.ajax({
+          url: api_address,
+          method: method,
+          headers: {"X-CSRFToken": csrf},
+          data: data,
+          dataType: "json",
+          success: data => {
+            console.log("successfull");
+            if (updation) {
+                updateElements(attachLocations, dataAttachSequence, data);
+            } else if (deletion) {
+                window.location = afterDeleteURL;
+            }
+          },
+          error: err => console.log(err),
+        });
+}
+
+
+/**
+ * Function to update the elements text after the updation is successfull
+ * @param attachLocations
+ * @param attachSequence
+ * @param data
+ */
+function updateElements(attachLocations, attachSequence, data) {
+    for(let i=0; i<= attachLocations.length; i++) {
+        $(attachLocations[i]).text(data[attachSequence[i]]);
+    }
+}
