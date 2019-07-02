@@ -77,11 +77,10 @@
                   "targets": [6],
                   "render": function(data, type, row) {
                       let html_data = "";
-                      if (data) {
+                      if (data && data != "null") {
                           let json = JSON.parse(data);
                           let keys = Object.keys(json);
                           for (let key of keys) {
-                              console.log(key);
                               let change = `<p class="mb-n1">${key}: ${json[key][0]} -> ${json[key][1]}`;
                               html_data = html_data + change;
                           }
