@@ -11,7 +11,7 @@ from datetime import datetime
 
 @decorators.login_required
 def activity_log(request):
-    return render(request, "schedules/activity_log.html")
+    return render(request, "activities/activity_log.html")
 
 
 @decorators.login_required
