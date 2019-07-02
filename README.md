@@ -10,7 +10,7 @@ Go To Application for all things at MVR
 #### Initial Steps
 - Go to the project directory
   ```
-  cd mvr-fe
+  cd mvr-insights
   ```
 - Build the Docker image
   ```
@@ -56,6 +56,9 @@ Go To Application for all things at MVR
 - Profile View/Update: <http://localhost:8000/profile/>
 - Reports: <http://localhost:8000/activity/report/>
 - Activity Log: <http://localhost:8000/activity/log/>
+- Enquiry:
+  - All the data of a model<http://localhost:8000/enquiry/{model_name}>
+  - Single object data <http://localhost:8000/enquiry/{model_name}/{id}/>
 - API access:
 
   | **Endpoint**                  | **HTTP Method** | **CRUD Method** | **Response**                                  |
