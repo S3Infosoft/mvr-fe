@@ -150,7 +150,8 @@ class IndexViewTestCase(TestCase):
 
     def test_page_access_to_authenticated_users(self):
 
-        user = get_user_model().objects.create_user("test@django.com", "django123")
+        user = get_user_model().objects.create_user("test@django.com",
+                                                    "django123")
         self.client.force_login(user)
 
         res = self.client.get(INDEX_URL)
@@ -175,7 +176,9 @@ class PasswordChangeViewTestCaseLoggedIn(TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.user = get_user_model().objects.create_user("test@django.com", "django123")
+        self.user = get_user_model().objects.create_user(
+            "test@django.com", "django123"
+        )
         self.client.force_login(self.user)
 
     def test_page_load_successfully(self):
@@ -212,8 +215,11 @@ class PasswordChangeViewTestCaseLoggedIn(TestCase):
 
         self.assertEquals(res.status_code, 200)
         self.assertTemplateUsed(res, "registration/password_change_form.html")
-        self.assertFormError(res, "form", "old_password",
-                             "Your old password was entered incorrectly. Please enter it again.")
+        self.assertFormError(res,
+                             "form",
+                             "old_password",
+                             "Your old password was entered incorrectly. "
+                             "Please enter it again.")
 
     def test_page_error_on_repeat_password_doesnt_match(self):
 
@@ -227,7 +233,9 @@ class PasswordChangeViewTestCaseLoggedIn(TestCase):
 
         self.assertEqual(res.status_code, 200)
         self.assertTemplateUsed(res, "registration/password_change_form.html")
-        self.assertFormError(res, "form", "new_password2", "The two password fields didn't match.")
+        self.assertFormError(res, "form",
+                             "new_password2",
+                             "The two password fields didn't match.")
 
 
 class PasswordResetViewTestCase(TestCase):
@@ -235,7 +243,9 @@ class PasswordResetViewTestCase(TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.user = get_user_model().objects.create_user("test@django.com", "django123")
+        self.user = get_user_model().objects.create_user(
+            "test@django.com", "django123"
+        )
 
     def test_page_loads_successfully(self):
 
@@ -252,7 +262,8 @@ class PasswordResetViewTestCase(TestCase):
         self.assertRedirects(res, reverse("password_reset_done"))
 
     def test_page_sends_email_successfully(self):
-        res = self.client.post(PASSWORD_RESET, data={"email": "test@django.com"})
+        res = self.client.post(PASSWORD_RESET,
+                               data={"email": "test@django.com"})
         from django.core import mail
 
         self.assertEqual(res.status_code, 302)
@@ -266,7 +277,8 @@ class PasswordResetViewTestCase(TestCase):
             "new_password2": "its_six_am",
         }
 
-        res = self.client.post(PASSWORD_RESET, data={"email": self.user.email})
+        res = self.client.post(PASSWORD_RESET,
+                               data={"email": self.user.email})
         from django.core import mail
 
         self.assertEqual(res.status_code, 302)

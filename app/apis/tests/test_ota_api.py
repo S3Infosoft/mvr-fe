@@ -1,18 +1,16 @@
 from ..serializers import OTASerializer
 from enquiry.models import OTA
 
-from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 
 from rest_framework import status
-from rest_framework.request import Request
-from rest_framework.test import APIClient
+from rest_framework.test import APIClient, APITestCase
 
 OTA_URL = reverse("ota-list")
 
 
-class PublicOTAAPITestCase(TestCase):
+class PublicOTAAPITestCase(APITestCase):
     """Test the publically available OTA API"""
 
     def setUp(self):
@@ -40,12 +38,14 @@ def sample_ota(name, **kwargs):
     return OTA.objects.create(name=name, **defaults)
 
 
-class PrivateOTAAPITestCase(TestCase):
+class PrivateOTAAPITestCase(APITestCase):
     """Test the OTA API available to authorized users"""
 
     def setUp(self):
         self.client = APIClient()
-        self.user = get_user_model().objects.create_user("test@s3-infosoft.com", "django123")
+        self.user = get_user_model().objects.create_user(
+            "test@s3-infosoft.com", "django123"
+        )
         self.client.force_authenticate(self.user)
 
     def test_retrieve_all_otas(self):

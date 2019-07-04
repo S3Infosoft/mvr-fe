@@ -45,7 +45,9 @@ class PrivateReviewAPITestCase(TestCase):
 
     def setUp(self):
         self.client = APIClient()
-        self.user = get_user_model().objects.create_user("test@s3-infosoft.com", "django123")
+        self.user = get_user_model().objects.create_user(
+            "test@s3-infosoft.com", "django123"
+        )
         self.client.force_authenticate(self.user)
 
     def test_retrieve_all_reviews(self):

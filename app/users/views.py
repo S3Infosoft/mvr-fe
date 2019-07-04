@@ -46,7 +46,7 @@ class LoginView(SuccessMessageMixin, views.LoginView):
             return redirect("index")
 
         return super(LoginView, self).get(request, *args, **kwargs)
-    
+
     def form_valid(self, form):
         user = form.cleaned_data["username"]
         logger.info("LOGIN by {}".format(user))
@@ -65,7 +65,7 @@ class RegisterView(SuccessMessageMixin, generic.CreateView):
         # Prevent already logged in user from this page
         if self.request.user.is_authenticated:
             return redirect("index")
-        
+
         return super(RegisterView, self).get(request, *args, **kwargs)
 
     def form_valid(self, form):
@@ -77,7 +77,7 @@ class RegisterView(SuccessMessageMixin, generic.CreateView):
 class PasswordChangeView(SuccessMessageMixin, views.PasswordChangeView):
     success_message = "Your password has been successfully changed."
     success_url = reverse_lazy("profile")
-    
+
     def form_valid(self, form):
         email = self.request.user.email
         logger.info("PASSWORD-CHANGE by {}".format(email))
@@ -102,7 +102,7 @@ class PasswordResetConfirmView(SuccessMessageMixin,
         user = get_object_or_404(get_user_model(), id=user_id)
         logger.info("PASSWORD-RESET by {}".format(user))
         return super(PasswordResetConfirmView, self).form_valid(form)
-    
+
     def form_invalid(self, form):
         print("Entered invalid")
         return super(PasswordResetConfirmView, self).form_invalid(form)

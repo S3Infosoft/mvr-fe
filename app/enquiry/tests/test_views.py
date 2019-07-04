@@ -21,7 +21,8 @@ class OTAListViewTestCase(TestCase):
 
     def test_page_loads_for_authenticated_users(self):
 
-        user = get_user_model().objects.create_user("test@s3-infosoft.com", "django123")
+        user = get_user_model().objects.create_user("test@s3-infosoft.com",
+                                                    "django123")
         self.client.force_login(user)
 
         res = self.client.get(OTA_LIST_URL)
@@ -40,11 +41,13 @@ class PartnerListViewTestCase(TestCase):
         res = self.client.get(PARTNER_LIST_URL)
 
         self.assertEqual(res.status_code, 302)
-        self.assertRedirects(res, reverse("login") + "?next=" + PARTNER_LIST_URL)
+        self.assertRedirects(res,
+                             reverse("login") + "?next=" + PARTNER_LIST_URL)
 
     def test_page_loads_for_authenticated_users(self):
 
-        user = get_user_model().objects.create_user("test@s3-infosoft.com", "django123")
+        user = get_user_model().objects.create_user("test@s3-infosoft.com",
+                                                    "django123")
         self.client.force_login(user)
 
         res = self.client.get(PARTNER_LIST_URL)
@@ -63,11 +66,13 @@ class ReviewListViewTestCase(TestCase):
         res = self.client.get(REVIEW_LIST_URL)
 
         self.assertEqual(res.status_code, 302)
-        self.assertRedirects(res, reverse("login") + "?next=" + REVIEW_LIST_URL)
+        self.assertRedirects(res,
+                             reverse("login") + "?next=" + REVIEW_LIST_URL)
 
     def test_page_loads_for_authenticated_users(self):
 
-        user = get_user_model().objects.create_user("test@s3-infosoft.com", "django123")
+        user = get_user_model().objects.create_user("test@s3-infosoft.com",
+                                                    "django123")
         self.client.force_login(user)
 
         res = self.client.get(REVIEW_LIST_URL)
