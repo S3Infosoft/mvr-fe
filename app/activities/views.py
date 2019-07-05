@@ -1,10 +1,10 @@
-from . import forms, utils
+from . import forms, utils, tasks
 
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.contrib.auth import decorators
-from django.core.mail import EmailMessage
 from django.http.response import HttpResponse, HttpResponseRedirect
+
 
 from datetime import datetime
 
@@ -17,8 +17,6 @@ def activity_log(request):
 @decorators.login_required
 def send_report_email(request, s_day, s_month, s_year,
                       e_day, e_month, e_year, model):
-    start_date = datetime(year=s_year, month=s_month, day=s_day).date()
-    end_date = datetime(year=e_year, month=e_month, day=e_day).date()
 
     if request.method == "POST":
         form = forms.ReportEmailForm(request.POST)
@@ -29,24 +27,9 @@ def send_report_email(request, s_day, s_month, s_year,
             sender = request.user.email
             recipient = cd["to"]
 
-            email = EmailMessage(
-                subject,
-                message,
-                sender,
-                [recipient])
-
-            csv = utils.generate_csv(start_date, end_date, model)
-            pdf = utils.generate_pdf(start_date, end_date, model)
-
-            name = f"{model}-{start_date} {end_date}"
-
-            email.attach(f"{name}.csv",
-                         csv.csv,
-                         "text/csv")
-            email.attach(f"{name}.pdf",
-                         pdf.getvalue(),
-                         "text/pdf")
-            email.send()
+            tasks.email_report(subject, message, sender, recipient,
+                               s_day, s_month, s_year, e_day, e_month, e_year,
+                               model)
 
             return HttpResponseRedirect(reverse_lazy("activity:report"))
         else:
