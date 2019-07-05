@@ -10,29 +10,12 @@ services:
       - ./app:/app
     command: >
       sh -c "python manage.py runserver 0.0.0.0:8000"
-  mvrautomation:
-    image: s3infosoft/mvr-automation:v0.2
-    ports:
-      - "5000:5000"
+    depends_on:
+      - background_tasks
+  background_tasks:
+    build:
+      context: .
+    volumes:
+      - ./app:/app
     command: >
-      sh -c "python3 App.py"
-  selenium-hub:
-    image: selenium/hub:3.141.59-bismuth
-    container_name: selenium-hub
-    ports:
-      - "4444:4444"
-  chrome:
-    image: selenium/node-chrome:3.141.59-bismuth
-    depends_on:
-      - selenium-hub
-    environment:
-      - HUB_HOST=selenium-hub
-      - HUB_PORT=4444
-  firefox:
-    image: selenium/node-firefox:3.141.59-bismuth
-    depends_on:
-      - selenium-hub
-    environment:
-      - HUB_HOST=selenium-hub
-      - HUB_PORT=4444
-
+      sh -c "python manage.py process_tasks"

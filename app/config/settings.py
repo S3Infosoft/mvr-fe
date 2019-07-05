@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     "import_export",
     "easyaudit",
     "debug_toolbar",
+    "background_task",
 
     # Apps
     "enquiry.apps.EnquiryConfig",
@@ -235,3 +236,5 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     )
 }
+
+BACKGROUND_TASK_RUN_ASYNC = True
