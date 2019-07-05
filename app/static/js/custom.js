@@ -235,3 +235,25 @@ function updateElements(attachLocations, attachSequence, data) {
         $(attachLocations[i]).text(data[attachSequence[i]]);
     }
 }
+
+
+/**
+ * Function to display and hide the alerts after a few seconds
+ * @param {String} alertType- Type of alert i.e success, error, etc
+ * @param {String} alertText- Text message to display in the alert.
+ */
+function displayAlert(alertType, alertText) {
+    let alertID = $("#messages");
+    let alertHTML = `<div class="alert alert-${alertType} text-center" role="alert">
+        <button type="button" class="close" data-dismiss="alert">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <span>${alertText}</span>
+      </div>`;
+    alertID.html(alertHTML);
+    alertID.css("display", "");
+
+    setTimeout(function() {
+      alertID.fadeOut("slow");
+    }, 3000);
+}
