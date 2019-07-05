@@ -8,14 +8,6 @@
 {% endblock extra_css %}
 
 {% block content %}
-  <div id="messages" class="container d-none">
-      <div class="alert alert-dismissible text-center" role="alert">
-        <button type="button" class="close" data-dismiss="alert">
-          <span aria-hidden="true">&times;</span>
-        </button>
-        <span></span>
-      </div>
-    </div>
   <div id="reportFormDiv" class="col-lg-8 mx-auto">
     <div class="card">
       <div class="card-header">
@@ -35,6 +27,7 @@
       </div>
     </div>
   </div>
+
   <div id="reportResult" class="card shadow mb-4 d-none">
     <div class="card-header py-2">
       <h6 class="mt-2 text-lg font-weight-bold text-primary float-left"><span class="reportName"></span> Report <span class="reportDuration text-gray-500"></span> <button id="reportDurationBtn" class="btn btn-outline-secondary btn-sm">Change</button> </h6>
@@ -83,6 +76,8 @@
         </div>
       </div>
   </div>
+
+
   <div id="reportError" class="d-none"></div>
 
 
@@ -251,7 +246,7 @@
             reset();
         });
 
-        /*$(document.body).on("submit", emailFormID, function(e) {
+        $(document.body).on("submit", emailFormID, function(e) {
             e.preventDefault();
             console.log("sending report email");
             const this_ = $(this);
@@ -262,16 +257,12 @@
                 data: this_.serialize(),
                 dateType: "json",
                 success: function(data) {
-                    console.log(data);
-
                     this_.trigger("reset");
                     $("#reportEmailFormModal").modal("hide");
-                    $("#messages").removeClass("d-none")
-                        .addClass("alert-success")
-                        .find("span")[1].text("Email successfully sent");
+                    displayAlert("success", "Email has been successfully sent.")
                 },
             })
-        })*/
+        })
 
     });
     </script>
