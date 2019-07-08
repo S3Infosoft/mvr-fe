@@ -1,8 +1,7 @@
 # mvr-insights
 Go To Application for all things at MVR
 
-[![Build Status](https://travis-ci.org/S3Infosoft/mvr-insights.svg?branch=master)](https://travis-ci.org/S3Infosoft/mvr-insights)
-
+[![Build Status](https://travis-ci.org/S3Infosoft/mvr-insights.svg?branch=master)](https://travis-ci.org/S3Infosoft/mvr-insights) [![Coverage Status](https://coveralls.io/repos/github/S3Infosoft/mvr-insights/badge.svg)](https://coveralls.io/github/S3Infosoft/mvr-insights)
 ## Features
 - User authentication i.e Registration, Login and Logout
 

@@ -1,0 +1,8 @@
+[run]
+source = .
+parallel = True
+
+[paths]
+source =
+  app/
+  /app/
