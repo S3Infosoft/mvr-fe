@@ -52,7 +52,7 @@
           </a>
           <div id="collapseReport" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <a id="ota-link" class="collapse-item" href="{% url 'activity:report' %}">
+                <a class="collapse-item" href="{% url 'activity:report' %}">
                   Generate Report
                 </a>
 
@@ -66,8 +66,9 @@
           </a>
           <div id="collapseRun" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <a id="ota-link" class="collapse-item" href="#">Scheduled</a>
-                <a id="partners-link" class="collapse-item" href="#">Completed</a>
+                <a class="collapse-item" href="{% url 'schedule:new' %}">New</a>
+                <a class="collapse-item" href="{% url 'schedule:uncomplete' %}">Scheduled</a>
+                <a class="collapse-item" href="{% url 'schedule:completed' %}">Completed</a>
             </div>
           </div>
         </li>
