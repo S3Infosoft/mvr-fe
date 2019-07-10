@@ -28,6 +28,8 @@
                   <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ request.user.get_full_name|default:"The Person Has No Name" }}</span>
                   {% if request.user.image %}
                     <img class="img-profile rounded-circle" src="{{ request.user.image_thumb.url }}" alt="">
+                  {% else %}
+                    <span><i class="fa fa-user fa-2x"></i></span>
                   {% endif %}
                 </a>
                 <!-- Dropdown - User Information -->
