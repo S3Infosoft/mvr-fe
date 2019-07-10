@@ -5,6 +5,7 @@
 
 {% block extra_css %}
   <link rel="stylesheet" href="{% static 'vendor/datatables/dataTables.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/bootstrap-datepicker.min.css' %}">
 {% endblock extra_css %}
 
 {% block content %}
@@ -114,63 +115,65 @@
 {% block extra_script %}
     <script src="{% static 'vendor/datatables/jquery.dataTables.min.js' %}"></script>
     <script src="{% static 'vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap-datepicker.min.js' %}"></script>
     <script>
 
-    const pdfID = "#reportPDF";
-    const csvID = "#reportCSV";
-    const emailFormID = "#reportEmailForm";
-
-    // Variable to set the reportResultDiv to previous state
-    const reportDivClone = $("#reportResult").clone();
-
-    const reportFormDiv = "#reportFormDiv";
-    const reportResultDiv = "#reportResult";
-    const reportErrorDiv = "#reportError";
-
-    let reportTableID = {
-        "OTA": "#dataTableOTA",
-        "PARTNER": "#dataTablePARTNER",
-        "REVIEW": "#dataTableREVIEW",
-    };
-
-    let reportTableDiv = {
-        "OTA": "#reportDivOTA",
-        "PARTNER": "#reportDivPARTNER",
-        "REVIEW": "#reportDivREVIEW",
-    };
-
-    const otaCol = [
-                {"data": "id"},
-                {"data": "name"},
-                {"data": "registration"},
-                {"data": "contact_person"},
-                {"data": "contact_name"},
-                {"data": "contact_email"},
-            ];
-    const partnerCol = [
-                        {"data": "id"},
-                        {"data": "name"},
-                        {"data": "partner_type"},
-                        {"data": "contact_person"},
-                        {"data": "contact_name"},
-                        {"data": "contact_email"},
-                    ];
-    const reviewCol = [
-                        {"data": "id"},
-                        {"data": "headline"},
-                        {"data": "source"},
-                        {"data": "created"},
-                        {"data": "rating"},
-                        {"data": "action"},
-                    ];
-
-    let columns = {
-        "OTA": otaCol,
-        "PARTNER": partnerCol,
-        "REVIEW": reviewCol,
-    };
-
     $(document).ready(function() {
+
+        const pdfID = "#reportPDF";
+        const csvID = "#reportCSV";
+        const emailFormID = "#reportEmailForm";
+
+        // Variable to set the reportResultDiv to previous state
+        const reportDivClone = $("#reportResult").clone();
+
+        const reportFormDiv = "#reportFormDiv";
+        const reportResultDiv = "#reportResult";
+        const reportErrorDiv = "#reportError";
+
+        let reportTableID = {
+            "OTA": "#dataTableOTA",
+            "PARTNER": "#dataTablePARTNER",
+            "REVIEW": "#dataTableREVIEW",
+        };
+
+        let reportTableDiv = {
+            "OTA": "#reportDivOTA",
+            "PARTNER": "#reportDivPARTNER",
+            "REVIEW": "#reportDivREVIEW",
+        };
+
+        const otaCol = [
+                    {"data": "id"},
+                    {"data": "name"},
+                    {"data": "registration"},
+                    {"data": "contact_person"},
+                    {"data": "contact_name"},
+                    {"data": "contact_email"},
+                ];
+        const partnerCol = [
+                            {"data": "id"},
+                            {"data": "name"},
+                            {"data": "partner_type"},
+                            {"data": "contact_person"},
+                            {"data": "contact_name"},
+                            {"data": "contact_email"},
+                        ];
+        const reviewCol = [
+                            {"data": "id"},
+                            {"data": "headline"},
+                            {"data": "source"},
+                            {"data": "created"},
+                            {"data": "rating"},
+                            {"data": "action"},
+                        ];
+
+        let columns = {
+            "OTA": otaCol,
+            "PARTNER": partnerCol,
+            "REVIEW": reviewCol,
+        };
+
 
         let table = null;
 
@@ -262,7 +265,16 @@
                     displayAlert("success", "Email has been successfully sent.")
                 },
             })
-        })
+        });
+
+        $('#id_start_date, #id_end_date').datepicker({
+            maxViewMode: 2,
+            todayBtn: "linked",
+            clearBtn: true,
+            autoclose: true,
+            todayHighlight: true,
+            toggleActive: true
+        });
 
     });
     </script>

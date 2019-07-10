@@ -25,14 +25,16 @@ class ReportForm(forms.Form):
 
     start_date = forms.DateField(widget=forms.DateInput(
         attrs={
-            "class": "form-control",
-            "type": "date"
+            "class": "form-control datepicker",
+            "data-provide": "datepicker",
+            "placeholder": "mm/dd/yyyy",
         },
     ))
     end_date = forms.DateField(widget=forms.DateInput(
         attrs={
-            "class": "form-control",
-            "type": "date"
+            "class": "form-control datepicker",
+            "data-provide": "datepicker",
+            "placeholder": "mm/dd/yyyy",
         },
     ))
     enquiry_type = forms.ChoiceField(choices=ENQUIRIES, widget=forms.Select(
