@@ -35,6 +35,7 @@
               <th>Contact Person</th>
               <th>Contact Name</th>
               <th>Contact Email</th>
+              <th>Price Check</th>
             </tr>
           </thead>
           <tfoot>
@@ -45,6 +46,7 @@
               <th>Contact Person</th>
               <th>Contact Name</th>
               <th>Contact Email</th>
+              <th>Price Check</th>
             </tr>
           </tfoot>
         </table>
@@ -115,34 +117,51 @@
                     {"data": "contact_person"},
                     {"data": "contact_name"},
                     {"data": "contact_email"},
+                    {"data": "price_check"},
                 ];
       const modalID = "#enquiryModal";
       const formID = "#enquiryForm";
 
-      fetchTableDataFromAPI(tableID, apiPathname, columns);
-
-      /* $.ajax({
-          url: window.location.origin + "{% url 'ota-list' %}",
+      $.ajax({
+          url: address.origin + apiPathname,
           method: "GET",
-          success: function (data) {
-              console.log(data);
-              $("#dataTable").dataTable({
+          dataType: "json",
+          success: function(data) {
+              $(tableID).dataTable({
                   "aaData": data,
-                  "columns": [
-                      {"data": "name"},
-                      {"data": "registration"},
-                      {"data": "contact_person"},
-                      {"data": "contact_name"},
-                      {"data": "contact_email"},
+                  "aaSorting": [],    // disable the initial sorting
+                  "columns": columns,
+                  "order": [[0, "desc"]],
+                  "columnDefs": [
+                      {
+
+                          "targets": 1,
+                          "render": function(data, type, row) {
+                              let rowID = row["id"];
+
+                              return `<a href="${rowID}/">${data}</a>`
+                          },
+                      },
+
+                      {
+                          "targets": [0],
+                          "visible": false,
+                          "search": false,
+                      },
+                      {
+                          "targets": 6,
+                          "data": null,
+                          "render": function(data, type, row) {
+                              return `
+                              <button class="btn btn-sm btn-info">Check Price</button>
+                              `
+                          },
+                          "search": false,
+                      }
                   ]
               });
-
-          },
-          error: function (err) {
-              console.log("Eeeeeee");
-              console.log(err.data)
           }
-      });*/
+      });
 
         handleEnquiryFormSubmit(formID, tableID, apiPathname, modalID);
     });
