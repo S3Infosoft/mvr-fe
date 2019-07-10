@@ -1,8 +1,19 @@
 from enquiry import models as enq_models
+from schedules.models import Schedule
 
 from rest_framework import serializers
 
 from easyaudit.models import CRUDEvent
+
+
+class ScheduleSerializer(serializers.ModelSerializer):
+    ota_name = serializers.StringRelatedField()
+    creator = serializers.StringRelatedField()
+
+    class Meta:
+        model = Schedule
+        fields = ("id", "creator", "ota_name",
+                  "check_in_date", "check_out_date", "status")
 
 
 class CRUDEventSerializer(serializers.ModelSerializer):
