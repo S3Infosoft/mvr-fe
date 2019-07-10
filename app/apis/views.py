@@ -1,5 +1,6 @@
 from . import serializers, mixins
 from enquiry import models as enq_models
+from schedules.models import Schedule
 from activities.forms import ReportForm
 
 from django.urls import reverse
@@ -9,6 +10,16 @@ from rest_framework import generics, views, status
 from rest_framework.response import Response
 
 from easyaudit.models import CRUDEvent
+
+
+class SchedulePendingListAPIView(generics.ListAPIView):
+    serializer_class = serializers.ScheduleSerializer
+    queryset = Schedule.objects.exclude(status__in=["FINISHED", "FAILED"])
+
+
+class ScheduleFinishedListAPIView(generics.ListAPIView):
+    serializer_class = serializers.ScheduleSerializer
+    queryset = Schedule.objects.filter(status__in=["FINISHED", "FAILED"])
 
 
 class ReportAPIView(views.APIView):
