@@ -1,10 +1,48 @@
 from . import utils
+from schedules.models import Schedule
+
 from django.core.mail import EmailMessage
+
 from background_task import background
+
 from datetime import datetime
+import json
+
+import requests
 
 
-@background(schedule=5)
+@background(schedule=1)
+def get_ota_data(obj_id, search_text, check_in_date, check_out_date, ota_name):
+    search_text = search_text
+    ota = ota_name
+    check_in_date = check_in_date
+    check_out_date = check_out_date
+
+    data = f'{{"search_text":"{search_text}", "checkin_date": ' \
+        f'"{check_in_date}", "checkout_date": "{check_out_date}" }}'
+    headers = {'Content-Type': 'application/json'}
+    url = "http://mvr-fe_mvrautomation_1:5000/automation/v1/{}".format(
+        ota.lower()
+    )
+    res = requests.post(url, headers=headers, data=data)
+    schedule = Schedule.objects.get(id=obj_id)
+
+    if res.status_code == 200:
+        res_data = json.loads(res.content.decode("utf-8"))
+        price = {"Std_CP": res_data["Std_CP"],
+                 "Std_EP": res_data["Std_EP"],
+                 "Sup_CP": res_data["Sup_CP"],
+                 "Sup_EP": res_data["Sup_EP"]}
+        schedule.status = "FINISHED"
+        schedule.listing_position_number = res_data["listed_position"]
+        schedule.room_category_and_rates = price
+    else:
+        schedule.status = "FAILED"
+
+    schedule.save()
+
+
+@background(schedule=1)
 def email_report(subject, message, sender, recipient,
                  s_day, s_month, s_year, e_day, e_month, e_year, model):
 
