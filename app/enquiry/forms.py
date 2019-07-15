@@ -17,7 +17,8 @@ class OTAForm(forms.ModelForm):
             "class": "form-control",
             "placeholder": "Enter Contact Person"
         }
-        self.fields["contact_name"].widget.attrs = {
+        self.fields["contact_number"].widget.attrs = {
+            "pattern": "\\d{3}",
             "class": "form-control",
             "placeholder": "Enter Contact Name"
         }
@@ -46,7 +47,8 @@ class PartnerForm(forms.ModelForm):
             "class": "form-control",
             "placeholder": "Enter Contact Person"
         }
-        self.fields["contact_name"].widget.attrs = {
+        self.fields["contact_number"].widget.attrs = {
+            "pattern": "\\d{3}",
             "class": "form-control",
             "placeholder": "Enter Contact Name"
         }

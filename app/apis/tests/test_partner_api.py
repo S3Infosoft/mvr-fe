@@ -30,7 +30,7 @@ def sample_partner(name, **kwargs):
     defaults = {
         "partner_type": "TRAVEL_AGENT",
         "contact_person": "Super Saiyan",
-        "contact_name": "Goku",
+        "contact_number": "9988776655",
         "contact_email": "goku@dbz.com"
     }
 
@@ -67,7 +67,7 @@ class PrivatePartnerAPITestCase(APITestCase):
         payload = {"name": "Trivago",
                    "partner_type": "TRAVEL_AGENT",
                    "contact_person": "Manager",
-                   "contact_name": "My Name is Khan",
+                   "contact_number": "9988776655",
                    "contact_email": "mynameis@slimshady.com"}
 
         res = self.client.post(PARTNER_URL, data=payload)
@@ -78,8 +78,8 @@ class PrivatePartnerAPITestCase(APITestCase):
         self.assertEqual(serializer.data["name"], payload["name"])
         self.assertEqual(serializer.data["contact_person"],
                          payload["contact_person"])
-        self.assertEqual(serializer.data["contact_name"],
-                         payload["contact_name"])
+        self.assertEqual(serializer.data["contact_number"],
+                         payload["contact_number"])
         self.assertEqual(serializer.data["contact_email"],
                          payload["contact_email"])
 
@@ -100,14 +100,14 @@ class PrivatePartnerAPITestCase(APITestCase):
         payload_before = {"name": "Trivago",
                           "partner_type": "TRAVEL_AGENT",
                           "contact_person": "Developer",
-                          "contact_name": "Mr. Developer",
+                          "contact_number": "9988776655",
                           "contact_email": "mynameis@slimshady.com"}
         obj = Partner.objects.create(**payload_before)
 
         payload_update = {"name": "Trivago",
                           "partner_type": "TRAVEL_AGENT",
                           "contact_person": "Manager",
-                          "contact_name": "Mr. Manager",
+                          "contact_number": "9988776644",
                           "contact_email": "mynameis@slimshady.com"}
 
         res = self.client.put(partner_detail_url(obj.pk), data=payload_update)
@@ -116,29 +116,31 @@ class PrivatePartnerAPITestCase(APITestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertNotEqual(obj.contact_person,
                             payload_before["contact_person"])
-        self.assertNotEqual(obj.contact_name, payload_before["contact_name"])
+        self.assertNotEqual(obj.contact_number,
+                            payload_before["contact_number"])
         self.assertEqual(obj.name, payload_before["name"])
         self.assertEqual(obj.contact_email, payload_before["contact_email"])
         self.assertEqual(obj.contact_person, payload_update["contact_person"])
-        self.assertEqual(obj.contact_name, payload_update["contact_name"])
+        self.assertEqual(obj.contact_number, payload_update["contact_number"])
 
     def test_update_using_patch(self):
         payload_before = {"name": "Trivago",
                           "partner_type": "TRAVEL_AGENT",
                           "contact_person": "Developer",
-                          "contact_name": "Mr. Developer",
+                          "contact_number": "9988776655",
                           "contact_email": "mynameis@slimshady.com"}
 
         obj = Partner.objects.create(**payload_before)
 
         payload_update = {"name": "MMT",
-                          "contact_name": "Slim Shady"}
+                          "contact_number": "9988776644"}
 
         res = self.client.patch(partner_detail_url(obj.pk), payload_update)
         obj.refresh_from_db()
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertNotEqual(obj.name, payload_before["name"])
-        self.assertNotEqual(obj.contact_name, payload_before["contact_name"])
+        self.assertNotEqual(obj.contact_number,
+                            payload_before["contact_number"])
         self.assertEqual(obj.name, payload_update["name"])
-        self.assertEqual(obj.contact_name, payload_update["contact_name"])
+        self.assertEqual(obj.contact_number, payload_update["contact_number"])

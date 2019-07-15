@@ -77,7 +77,7 @@ class TestPrivateReportAPI(APITestCase):
     def test_ota_report_is_generated_from_duration_given(self):
         model_payload = {
             "contact_person": "Super Saiyan",
-            "contact_name": "Goku",
+            "contact_number": "9988776655",
             "contact_email": "goku@dbz.com"
         }
 
@@ -130,7 +130,7 @@ class TestPrivateReportAPI(APITestCase):
         model_payload = {
             "partner_type": "TRAVEL_AGENT",
             "contact_person": "Super Saiyan",
-            "contact_name": "Goku",
+            "contact_number": "9988776655",
             "contact_email": "goku@dbz.com"
         }
 

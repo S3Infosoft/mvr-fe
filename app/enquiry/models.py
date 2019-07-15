@@ -7,7 +7,7 @@ class OTA(models.Model):
     registration = models.DateTimeField(auto_now_add=True)
     update = models.DateTimeField(auto_now=True)
     contact_person = models.CharField(max_length=150)
-    contact_name = models.CharField(max_length=150)
+    contact_number = models.CharField(max_length=15)
     contact_email = models.EmailField()
 
     class Meta:
@@ -30,7 +30,7 @@ class Partner(models.Model):
     name = models.CharField(max_length=150)
     partner_type = models.CharField(choices=PARTNERS, max_length=30)
     contact_person = models.CharField(max_length=150)
-    contact_name = models.CharField(max_length=150)
+    contact_number = models.CharField(max_length=15)
     contact_email = models.EmailField()
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)

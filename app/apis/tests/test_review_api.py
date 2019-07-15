@@ -70,7 +70,7 @@ class PrivateReviewAPITestCase(APITestCase):
                    "action": "Packup"}
 
         res = self.client.post(REVIEW_URL, data=payload)
-        instance = Review.objects.get(pk=1)
+        instance = Review.objects.all()[0]
         serializer = ReviewSerializer(instance)
 
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
