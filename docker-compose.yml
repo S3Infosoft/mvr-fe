@@ -39,6 +39,7 @@ services:
       context: .
     depends_on:
       - app
+      - db
     environment:
       - DB_NAME=app
       - DB_USER=insights
@@ -47,7 +48,7 @@ services:
     volumes:
       - ./app:/app
     command: >
-      sh -c "python manage.py process_tasks --sleep=1 --log-std --traceback"
+      sh -c "python manage.py process_tasks --sleep=3 --log-std --traceback"
   mvrautomation:
     restart: always
     container_name: mvr_automation
