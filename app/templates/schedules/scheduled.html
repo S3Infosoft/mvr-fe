@@ -83,6 +83,33 @@
                                 return `<a href="${rowID}/">${data}</a>`
                             },
                         },
+                      {
+                        "targets": 3,
+                        "render": function(data, type, row) {
+                          return formatDate(data);
+                        }
+                      },
+                      {
+                        "targets": 4,
+                        "render": function(data, type, row) {
+                          return formatDate(data);
+                        }
+                      },
+                      {
+                        "targets": 5,
+                        "render": function(data, type, row) {
+                          let color = null
+                          if (data == "FINISHED") {
+                            color = "success";
+                          } else if (data == "FAILED") {
+                            color = "danger";
+                          } else if (data == "PENDING" || data == "EXECUTING") {
+                            color = "primary";
+                          }
+
+                          return `<span class="btn btn-batch btn-${color}">${data}</span>`
+                        }
+                      }
                     ]
                 });
             }

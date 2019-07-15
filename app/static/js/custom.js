@@ -79,8 +79,9 @@ $(document).ready(function() {
  * @param {String} tableID - The table ID to attach the results
  * @param {String} apiPathname - The API pathname to send GET request
  * @param {Array} columns - The list of column names to attach data
+ * @param {Array} customColumns - Extra settings for the column that doesn't apply to all pages
  */
-function fetchTableDataFromAPI(tableID, apiPathname, columns) {
+function fetchTableDataFromAPI(tableID, apiPathname, columns, customColumns=[]) {
     console.log("Entered the calling function");
     $.ajax({
         url: address.origin + apiPathname,
@@ -99,7 +100,7 @@ function fetchTableDataFromAPI(tableID, apiPathname, columns) {
                         "render": function(data, type, row) {
                             let rowID = row["id"];
 
-                            return `<a href="${rowID}/">${data}</a>`
+                            return `<a href="${rowID}/">${data.substring(0, 100)}</a>`
                         },
                     },
 
@@ -108,6 +109,7 @@ function fetchTableDataFromAPI(tableID, apiPathname, columns) {
                         "visible": false,
                         "search": false,
                     },
+                    ...customColumns
                 ]
             });
         }
@@ -256,4 +258,28 @@ function displayAlert(alertType, alertText) {
     setTimeout(function() {
       alertID.fadeOut("slow");
     }, 3000);
+}
+
+
+/**
+ * Function to convert the datetime string coming from API to dd-mm-yyyy HH:MM
+ * @param {string} dateString - The string object that is to be converted
+ * @param {boolean} only_date - Whether to return date only or include time also.
+ * @returns {string}
+ */
+function formatDate(dateString, only_date=false) {
+    let date = new Date(dateString);
+
+    let day = date.getDate();
+    let month = date.getMonth();
+    let year = date.getFullYear();
+    let hours = date.getHours();
+    let minutes = date.getMinutes();
+
+    if (only_date) {
+        return `${day}/${month}/${year}`
+    }
+
+    return `${day}/${month}/${year} ${hours}:${minutes}`;
+
 }

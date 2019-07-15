@@ -11,7 +11,7 @@
       <div class="card-body text-dark">
         Registration Date: <span class="text-lg"></span><br>
         Contact Person: <span class="text-lg"> </span><br>
-        Contact Name: <span class="text-lg"> </span><br>
+        Contact Number: <span class="text-lg"> </span><br>
         Contact Email: <span class="text-lg"> </span><br>
       </div>
     </div>
@@ -45,10 +45,10 @@
 
             <div class="col-6">
               <div class="form-group mb-0">
-                <label for="id_contact_name" class="col-form-label text-dark font-weight-bold">Contact Name:</label>
-                {{ form.contact_name }}
+                <label for="id_contact_number" class="col-form-label text-dark font-weight-bold">Contact Number:</label>
+                {{ form.contact_number }}
                 <div class="text-danger">
-                  {{ form.contact_name.errors }}
+                  {{ form.contact_number.errors }}
                 </div>
               </div>
             </div>
@@ -80,7 +80,7 @@
 {% block extra_script %}
   <script>
     let dataAttachSequence = ["name", "registration", "contact_person",
-                              "contact_name", "contact_email"];
+                              "contact_number", "contact_email"];
     let api_address = address.pathname.replace("enquiry", "api/v1");
 
     let cardBodySpans = $("div.card-body span");

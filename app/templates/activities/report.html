@@ -174,12 +174,50 @@
             "REVIEW": reviewCol,
         };
 
+        const reviewCustomCol = [
+            {
+              "targets": 3,
+              "render": function(data, type, row) {
+                  return formatDate(data);
+              },
+            },
+            {
+              "targets": 2,
+              "render": function (data, type, row) {
+                return data.substr(0, 100);
+              },
+            },
+            {
+              "targets": 5,
+              "render": function (data, type, row) {
+                return data.substr(0, 100);
+              },
+            }
+        ];
+
+        const otaCustomCol = [{
+            "targets": 2,
+            "render": function(data, type, row) {
+                return formatDate(data);
+            },
+        }];
+
+        let customColumns = {
+              "OTA": otaCustomCol,
+              "REVIEW": reviewCustomCol,
+            };
+
+        let urlPrefix = {
+          "OTA": "enquiry/ota",
+          "PARTNER": "enquiry/partner",
+          "REVIEW": "enquiry/review"
+        };
 
         let table = null;
 
         let reportGetURL = "{% url 'api_report' %}";
 
-        function buildTable(data, tableID, column) {
+        function buildTable(data, tableID, column, urlPrefix, customColumns=[]) {
             table = $(tableID).dataTable({
                 "aaData": data,
                 "aaSorting": [],    // disable the initial sorting
@@ -192,7 +230,7 @@
                         "render": function(data, type, row) {
                             let rowID = row["id"];
 
-                            return `<a href="${rowID}/">${data}</a>`
+                            return `<a href="/${urlPrefix}/${rowID}/">${data.substring(0, 100)}</a>`
                         },
                     },
 
@@ -201,6 +239,8 @@
                         "visible": false,
                         "search": false,
                     },
+
+                    ...customColumns
                 ]
             });
 
@@ -218,18 +258,22 @@
                 dataType: "json",
                 data: this_.serialize(),
                 success: function(data) {
+                    let enquiry_type = data.enquiry_type
+
                     table = buildTable(data.data,
-                               reportTableID[data.enquiry_type],
-                               columns[data.enquiry_type]);
+                               reportTableID[enquiry_type],
+                               columns[enquiry_type],
+                               urlPrefix[enquiry_type],
+                               customColumns[enquiry_type]);
 
                     $(reportFormDiv).addClass("d-none");
-                    $(".reportName").text(data.enquiry_type);
+                    $(".reportName").text(enquiry_type);
                     $(pdfID).attr("href", data.pdf_url);
                     $(csvID).attr("href", data.csv_url);
                     $(emailFormID).attr("action", data.email_url);
                     $(".reportDuration").text(`[${data.start_date} to ${data.end_date}]`);
                     $(reportResultDiv).removeClass("d-none");
-                    $(reportTableDiv[data.enquiry_type]).removeClass("d-none")
+                    $(reportTableDiv[enquiry_type]).removeClass("d-none")
                 },
                 error: function(err) {
                     console.log(err);
@@ -267,7 +311,7 @@
             })
         });
 
-        $('#id_start_date, #id_end_date').datepicker({
+        $('.datepicker').datepicker({
             maxViewMode: 2,
             todayBtn: "linked",
             clearBtn: true,

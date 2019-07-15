@@ -26,7 +26,7 @@
     </div>
     <div class="card-body">
       <div class="table-responsive">
-        <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+        <table class="table table-bordered table-hover table-condensed" id="dataTable" width="100%" cellspacing="0">
           <thead>
             <tr>
               <th></th>
@@ -123,36 +123,36 @@
                       {"data": "headline"},
                       {"data": "source"},
                       {"data": "created"},
-                      {"data": "rating"},
+                      {"data": "rating_display"},
                       {"data": "action"},
                   ];
         const modalID = "#enquiryModal";
         const formID = "#enquiryForm";
 
-        fetchTableDataFromAPI(tableID, apiPathname, columns);
-
-      /* $.ajax({
-          url: window.location.origin + "{% url 'review-list' %}",
-          method: "GET",
-          success: function (data) {
-              console.log(data);
-              $("#dataTable").dataTable({
-                  "aaData": data,
-                  "columns": [
-                      {"data": "headline"},
-                      {"data": "source"},
-                      {"data": "created"},
-                      {"data": "rating"},
-                      {"data": "action"},
-                  ]
-              });
-
+        let customColumns = [
+          {
+            "targets": 3,
+            "render": function(data, type, row) {
+                return formatDate(data);
+            },
           },
-          error: function (err) {
-              console.log("Eeeeeee");
-              console.log(err.data)
-          }
-      }); */
+
+          {
+            "targets": 2,
+            "render": function(data, type, row) {
+              return data.substring(0,70);
+            },
+          },
+
+          {
+            "targets": 5,
+            "render": function(data, type, row) {
+              return data.substring(0,70);
+            },
+          },
+        ];
+
+        fetchTableDataFromAPI(tableID, apiPathname, columns, customColumns);
 
         handleEnquiryFormSubmit(formID, tableID, apiPathname, modalID);
     });

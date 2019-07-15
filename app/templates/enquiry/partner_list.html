@@ -81,8 +81,8 @@
               </div>
 
               <div class="form-group mb-0">
-                <label for="id_contact_name" class="col-form-label text-dark font-weight-bold">Contact Name:</label>
-                {{ form.contact_name }}
+                <label for="id_contact_number" class="col-form-label text-dark font-weight-bold">Contact Number:</label>
+                {{ form.contact_number }}
               </div>
 
                <div class="form-group mb-0">
@@ -127,28 +127,6 @@
 
         fetchTableDataFromAPI(tableID, apiPathname, columns);
 
-      /* $.ajax({
-          url: window.location.origin + "{% url 'partner-list' %}",
-          method: "GET",
-          success: function (data) {
-              console.log(data);
-              $("#dataTable").dataTable({
-                  "aaData": data,
-                  "columns": [
-                      {"data": "name"},
-                      {"data": "partner_type"},
-                      {"data": "contact_person"},
-                      {"data": "contact_name"},
-                      {"data": "contact_email"},
-                  ]
-              });
-
-          },
-          error: function (err) {
-              console.log("Eeeeeee");
-              console.log(err.data)
-          }
-      });*/
         handleEnquiryFormSubmit(formID, tableID, apiPathname, modalID);
     });
   </script>

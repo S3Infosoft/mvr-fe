@@ -67,12 +67,12 @@
               ],
               "order": [[0, "desc"]],
               "columnDefs": [
-                  {
-                      "targets": [0],
-                      "visible": false,
-                      "search": false,
-                  },
-                  {
+                {
+                    "targets": [0],
+                    "visible": false,
+                    "search": false,
+                },
+                {
 
                   "targets": [6],
                   "render": function(data, type, row) {
@@ -81,13 +81,19 @@
                           let json = JSON.parse(data);
                           let keys = Object.keys(json);
                           for (let key of keys) {
-                              let change = `<p class="mb-n1">${key}: ${json[key][0]} -> ${json[key][1]}`;
+                              let change = `<p class="mb-n1">${key}: ${json[key][0].substring(0, 150)} -> ${json[key][1].substring(0, 150)}`;
                               html_data = html_data + change;
                           }
                       }
                       return html_data
                   },
-              },
+                },
+                {
+                  "targets": 5,
+                  "render": function(data, type, row) {
+                    return formatDate(data);
+                  },
+                },
               ]
           });
         },
