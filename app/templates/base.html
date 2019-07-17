@@ -1,4 +1,5 @@
 {% load static %}
+{% load cache %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -32,7 +33,9 @@
   <div id="wrapper">
 
     <!-- Sidebar -->
-    {% include "snippets/sidebar.html" %}
+    {% cache 1800 sidebar %}
+      {% include "snippets/sidebar.html" %}
+    {% endcache %}
     <!-- End of the sidebar -->
 
     <!-- Content Wrapper -->
@@ -42,7 +45,9 @@
       <div id="content">
 
         <!-- Topbar -->
-        {% include "snippets/navbar.html" %}
+        {% cache 900 navbar request.user.id %}
+          {% include "snippets/navbar.html" %}
+        {% endcache %}
         <!-- End of topbar -->
 
         {% include 'snippets/alerts.html' %}
@@ -59,7 +64,9 @@
 
       <!-- Footer -->
       {% block footer %}
-        {% include "snippets/footer.html" %}
+        {% cache None footer %}
+          {% include "snippets/footer.html" %}
+        {% endcache %}
       {% endblock footer %}
       <!-- End of Footer -->
 
@@ -76,7 +83,9 @@
 
   <!-- Logout Modal-->
   {% block logout_modal %}
-    {% include 'snippets/logout_modal.html' %}
+    {% cache None logout_modal %}
+      {% include 'snippets/logout_modal.html' %}
+    {% endcache %}
   {% endblock logout_modal %}
   <!-- End of logout modal -->
 
