@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load staticfiles %}
 
 {% block title %}Profile :: {% endblock title %}
 
@@ -36,8 +37,8 @@
                     <p class="mb-0">{{ object.email }}</p>
                   </div>
                   <div class="text-center text-sm-right">
-                    <div class="text-muted"><small>Joined {{object.date_joined.date}}</small></div>
-                    <div class="text-muted"><small>Last login {{ object.last_login.date }}</small></div>
+                    <div class="text-muted"><small><span class="font-weight-bold">Joined</span> {{object.date_joined.date}}</small></div>
+                    <div class="text-muted"><small><span class="font-weight-bold">Last login</span> {{ object.last_login.date }}</small></div>
                   </div>
                 </div>
               </div>
@@ -102,6 +103,12 @@
                                      name="{{ form.image.html_name }}"
                                      accept="image/*">
                             </div>
+                            {% if object.image %}
+                              <div class="form-check mt-1">
+                                <input type="checkbox" name="image-clear" class="form-check-input" id="image-clear_id">
+                                <label class="ml-1 form-check-label" for="image-clear_id">Clear</label>
+                              </div>
+                            {% endif %}
                           </div>
                         </div>
 
@@ -109,7 +116,7 @@
                       </div>
                     </div>
                     <div class="row">
-                      <div class="col-12 col-sm-6 mt-2 mb-2">
+                      <div class="col-12 col-sm-6 mt-4 mb-2">
                         <a href="{% url 'password_change' %}">Change password</a>
                       </div>
 
@@ -120,7 +127,6 @@
                       </div>
                     </div>
                   </form>
-
                 </div>
               </div>
             </div>
@@ -133,15 +139,10 @@
   </div>
 </div>
 </div>
-
 {% endblock content %}
 
 {% block extra_script %}
   <script>
-    // Add the following code if you want the name of the file appear on select
-    $(".custom-file-input").on("change", function() {
-      let fileName = $(this).val().split("\\").pop();
-      $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
-    });
+
 </script>
 {% endblock extra_script %}

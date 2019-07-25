@@ -1,4 +1,5 @@
-from .forms import RegisterForm
+from .models import GlobalInfo
+from .forms import RegisterForm, GlobalInfoForm
 from enquiry.models import OTA, Review, Partner
 from schedules.models import Schedule
 
@@ -14,6 +15,18 @@ import logging
 logger = logging.getLogger("auth")
 
 
+class GlobalInfoDetailUpdate(mixins.LoginRequiredMixin,
+                             SuccessMessageMixin,
+                             generic.UpdateView):
+    model = GlobalInfo
+    form_class = GlobalInfoForm
+    success_message = "Your settings have been successfully updated."
+    template_name = "users/global.html"
+
+    def get_object(self, queryset=None):
+        return GlobalInfo.objects.first()
+
+
 class ProfileDetailUpdate(mixins.LoginRequiredMixin,
                           SuccessMessageMixin,
                           generic.UpdateView):
@@ -25,6 +38,14 @@ class ProfileDetailUpdate(mixins.LoginRequiredMixin,
     def get_object(self, queryset=None):
 
         return self.request.user
+
+    def get_context_data(self):
+        ctx = super(ProfileDetailUpdate, self).get_context_data()
+        ctx["additional_form"] = GlobalInfoForm(initial={
+            "address": GlobalInfo.objects.first().address
+        })
+
+        return ctx
 
     def form_valid(self, form):
         logger.info("Profile Updated by {}".format(self.request.user.email))

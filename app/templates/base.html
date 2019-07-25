@@ -21,6 +21,7 @@
 
   <!-- Custom styles for this template-->
   <link href="{% static 'css/sb-admin-2.min.css' %}" rel="stylesheet">
+  <link href="{% static 'css/custom.css' %}" rel="stylesheet">
 
   {% block extra_css %}
   {% endblock extra_css %}
@@ -45,7 +46,7 @@
       <div id="content">
 
         <!-- Topbar -->
-        {% cache 900 navbar request.user.id %}
+        {% cache 900 navbar request.user.id request.user.get_full_name request.user.image %}
           {% include "snippets/navbar.html" %}
         {% endcache %}
         <!-- End of topbar -->
