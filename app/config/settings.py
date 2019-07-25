@@ -129,7 +129,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = os.path.join(BASE_DIR, "static"),
-STATIC_ROOT = "/vol/web/static_root/"
+STATIC_ROOT = os.path.join(BASE_DIR, "static_root")
 
 AUTH_USER_MODEL = "users.CustomUser"
 
@@ -150,7 +150,7 @@ if os.path.isfile("email.txt"):
 else:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-LOG_DIR = "/vol/logs/"
+LOG_DIR = os.path.join(BASE_DIR, "logs")
 
 LOGGING = {
     "version": 1,
@@ -191,7 +191,7 @@ LOGGING = {
 }
 
 MEDIA_URL = "/media/"
-MEDIA_ROOT = "/vol/web/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 # django-import-export
 IMPORT_EXPORT_USE_TRANSACTIONS = True
