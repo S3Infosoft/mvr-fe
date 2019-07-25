@@ -1,5 +1,6 @@
 from . import resources
 from enquiry import models
+from users.models import GlobalInfo
 
 from django.core.cache import cache
 from django.template.loader import get_template
@@ -12,6 +13,12 @@ from xhtml2pdf import pisa
 
 def render_to_pdf(template_src, context_dic: dict):
     template = get_template(template_src)
+
+    global_obj = GlobalInfo.objects.first()
+
+    context_dic["logo"] = global_obj.logo
+    context_dic["address"] = global_obj.address
+
     html = template.render(context_dic)
     result = BytesIO()
     pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")), result)
