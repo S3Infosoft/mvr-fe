@@ -42,3 +42,8 @@ class CustomUserAdmin(UserAdmin):
 
     search_fields = "email",
     ordering = "email",
+
+
+@admin.register(models.GlobalInfo)
+class GlobalInfoAdmin(admin.ModelAdmin):
+    form = forms.GlobalInfoAdminForm

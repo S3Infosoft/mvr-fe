@@ -1,9 +1,10 @@
 from django.db import models
 from django.urls import reverse
 from django.contrib.auth import base_user, models as auth_models
-from django.utils.translation import ugettext_lazy as _
 from django.utils.timezone import now
+from django.utils.translation import ugettext_lazy as _
 from django.core.files.base import ContentFile
+from django.db.models.signals import post_save
 
 from PIL import Image
 
@@ -82,7 +83,9 @@ class CustomUser(auth_models.AbstractUser):
 
     def __init__(self, *args, **kwargs):
         super(CustomUser, self).__init__(*args, **kwargs)
-        self._curr_image = self.image.name
+
+        # Store the current image to check for a change while updating image
+        self._curr_image = self.image
 
     @staticmethod
     def get_absolute_url():
@@ -94,10 +97,19 @@ class CustomUser(auth_models.AbstractUser):
 
         if not created:
 
-            # Store the current image in image
+            # Store the new image
             image = self.image
-            if image.name != self._curr_image:
+
+            if image and image.name != self._curr_image.name:
                 image_updated = True
+
+                # Deleting the previous image and its thumnail
+                self._curr_image.delete(False)
+                self.image_thumb.delete(False)
+
+                # Assigning the image field with the new image
+                self.image = image
+
                 image_name = image.name.rsplit("/", 1)[-1]
 
                 # Create a new image for thumbnail
@@ -127,3 +139,56 @@ class CustomUser(auth_models.AbstractUser):
             self.image.delete(False)
             self.image_thumb.delete(False)
         super(CustomUser, self).delete(*args, **kwargs)
+
+
+class GlobalInfo(models.Model):
+    """Model to store extra user information accecible by everyone"""
+
+    logo = models.ImageField(upload_to="logo/", blank=True, null=True)
+    address = models.CharField(max_length=350, blank=True, null=True)
+
+    def __init__(self, *args, **kwargs):
+        super(GlobalInfo, self).__init__(*args, **kwargs)
+        self._current_logo = self.logo
+
+    def save(self, *args, **kwargs):
+        """
+        - Overriding save to enforce only single instance of the model
+        - Delete the previous image files on update
+        """
+
+        if self.__class__.objects.count():
+            self.pk = self.__class__.objects.first().pk
+
+        created = self._state.adding    # Whether object created or updated
+        logo_updated = False
+
+        if not created:
+            logo = self.logo
+
+            if self._current_logo.name != logo.name:
+                self._current_logo.delete(False)
+                self.logo = logo
+
+                logo_updated = True
+        super(GlobalInfo, self).save(*args, **kwargs)
+
+        if logo_updated:
+            logo = Image.open(self.logo.path)
+
+            if logo.width > 300 or logo.height > 300:
+                output_size = (300, 300)
+                logo.thumbnail(output_size)
+                logo.save(self.logo.path)
+
+    @staticmethod
+    def get_absolute_url():
+        return reverse("global_settings")
+
+
+def create_global_info(sender, instance, created, *args, **kwargs):
+    if created:
+        GlobalInfo.objects.get_or_create()
+
+
+post_save.connect(create_global_info, sender=CustomUser)
