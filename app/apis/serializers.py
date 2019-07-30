@@ -1,9 +1,16 @@
 from enquiry import models as enq_models
 from schedules.models import Schedule
+from users.models import GlobalInfo
 
 from rest_framework import serializers
 
 from easyaudit.models import CRUDEvent
+
+
+class GlobalInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GlobalInfo
+        fields = "__all__"
 
 
 class ScheduleSerializer(serializers.ModelSerializer):

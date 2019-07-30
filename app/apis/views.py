@@ -1,6 +1,7 @@
 from . import serializers, mixins
 from enquiry import models as enq_models
 from schedules.models import Schedule
+from users.models import GlobalInfo
 from activities.forms import ReportForm
 
 from django.urls import reverse
@@ -10,6 +11,13 @@ from rest_framework import generics, views, status
 from rest_framework.response import Response
 
 from easyaudit.models import CRUDEvent
+
+
+class GlobalSettingsAPIView(generics.RetrieveUpdateAPIView):
+    serializer_class = serializers.GlobalInfoSerializer
+
+    def get_object(self):
+        return GlobalInfo.objects.first()
 
 
 class SchedulePendingListAPIView(generics.ListAPIView):

@@ -16,6 +16,8 @@ schedule = [
 ]
 
 urlpatterns = [
+    path("global-settings/", views.GlobalSettingsAPIView.as_view(),
+         name="api_global_settings"),
     path("schedule/", include(schedule)),
     path("report/", views.ReportAPIView.as_view(), name="api_report"),
     path("log/", views.ActivityListAPIView.as_view(),
