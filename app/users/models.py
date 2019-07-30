@@ -166,7 +166,7 @@ class GlobalInfo(models.Model):
         if not created:
             logo = self.logo
 
-            if self._current_logo.name != logo.name:
+            if logo and self._current_logo.name != logo.name:
                 self._current_logo.delete(False)
                 self.logo = logo
 

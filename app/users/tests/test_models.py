@@ -1,6 +1,7 @@
 from django.db import IntegrityError
 from django.test import TestCase
 from django.contrib.auth import get_user_model
+from ..models import GlobalInfo
 
 import logging
 
@@ -66,3 +67,29 @@ class CustomUserManagerTestCase(TestCase):
                 password="django123",
                 is_superuser=False
             )
+
+
+class GlobalInfoModelTestCase(TestCase):
+
+    def test_model_instance_is_created_on_first_signup(self):
+        self.assertEqual(GlobalInfo.objects.count(), 0)
+
+        get_user_model().objects.create_user("test@test.com", "django123")
+
+        self.assertEqual(GlobalInfo.objects.count(), 1)
+
+    def test_no_new_instance_is_created_on_more_than_one_user(self):
+        self.assertEqual(GlobalInfo.objects.count(), 0)
+
+        get_user_model().objects.create_user("test1@test.com", "django123")
+        get_user_model().objects.create_user("test2@test.com", "django123")
+        get_user_model().objects.create_user("test3@test.com", "django123")
+
+        self.assertEqual(get_user_model().objects.count(), 3)
+        self.assertEqual(GlobalInfo.objects.count(), 1)
+
+    def test_only_one_instance_can_be_created(self):
+        GlobalInfo.objects.create()
+
+        with self.assertRaises(IntegrityError):
+            GlobalInfo.objects.create()

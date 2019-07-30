@@ -12,13 +12,12 @@ from datetime import datetime
 from unittest import mock
 
 REPORT_URL = reverse("api_report")
-CURRENT_DATE = datetime.now()
+CURRENT_DATE = datetime(2019, 1, 1)
 
 
 def create_model_instance(model, params: dict, **kwargs):
-    now = datetime.now()
 
-    default_time = {"year": now.year, "month": now.month, "day": now.day}
+    default_time = {"year": 2019, "month": 1, "day": 1}
     if kwargs:
         default_time.update(kwargs)
 
