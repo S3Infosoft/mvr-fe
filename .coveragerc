@@ -9,4 +9,6 @@ omit =
 
 
 [paths]
-source = .
+source =
+  app/
+  /app/
