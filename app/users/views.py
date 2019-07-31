@@ -138,7 +138,3 @@ class PasswordResetConfirmView(SuccessMessageMixin,
         user = get_object_or_404(get_user_model(), id=user_id)
         logger.info("PASSWORD-RESET by {}".format(user))
         return super(PasswordResetConfirmView, self).form_valid(form)
-
-    def form_invalid(self, form):
-        print("Entered invalid")
-        return super(PasswordResetConfirmView, self).form_invalid(form)

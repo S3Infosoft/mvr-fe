@@ -1,14 +1,9 @@
 from . import forms, models
 
 from django.shortcuts import render
-from django.contrib.auth import decorators, mixins
-from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib.auth import decorators
 
 # cache key format <model name in uppercase>-<start-date>-<end-date>
-
-
-class DefaultRequirments(mixins.LoginRequiredMixin, SuccessMessageMixin):
-    pass
 
 
 @decorators.login_required
@@ -39,24 +34,16 @@ def review_detail(request, pk):
 
 @decorators.login_required
 def ota_list(request):
-    if request.is_ajax():
-        return render(request, "enquiry/jquery_snippets/ota_list_jquery.html")
     return render(request, "enquiry/ota_list.html", {"form": forms.OTAForm()})
 
 
 @decorators.login_required
 def partner_list(request):
-    if request.is_ajax():
-        return render(request,
-                      "enquiry/jquery_snippets/partner_list_jquery.html")
     return render(request, "enquiry/partner_list.html",
                   {"form": forms.PartnerForm()})
 
 
 @decorators.login_required
 def review_list(request):
-    if request.is_ajax():
-        return render(request,
-                      "enquiry/jquery_snippets/review_list_jquery.html")
     return render(request, "enquiry/review_list.html",
                   {"form": forms.ReviewForm()})

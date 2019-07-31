@@ -71,7 +71,7 @@ class PrivatePartnerAPITestCase(APITestCase):
                    "contact_email": "mynameis@slimshady.com"}
 
         res = self.client.post(PARTNER_URL, data=payload)
-        instance = Partner.objects.get(pk=1)
+        instance = Partner.objects.first()
         serializer = PartnerSerializer(instance)
 
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)

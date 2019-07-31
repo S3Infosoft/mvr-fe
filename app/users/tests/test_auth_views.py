@@ -1,4 +1,3 @@
-from django.test import Client
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth import get_user_model
@@ -12,10 +11,19 @@ LOGIN_URL = reverse("login")
 REGISTER_URL = reverse("register")
 PASSWORD_CHANGE = reverse("password_change")
 PASSWORD_RESET = reverse("password_reset")
+PROFILE_URL = reverse("profile")
 
 
 def password_reset_confirm_url(uid, token):
     return reverse("password_reset_confirm", args=[uid, token])
+
+
+class TestCaseWithUser(TestCase):
+
+    def setUp(self):
+        self.user = get_user_model().objects.create_user(
+            "test@django.com", "django123"
+        )
 
 
 class LoginViewTestCase(TestCase):
@@ -24,7 +32,6 @@ class LoginViewTestCase(TestCase):
     """
 
     def setUp(self):
-        self.client = Client()
         self.user = get_user_model().objects.create_user(
             email="test@django.com",
             password="django123",
@@ -58,9 +65,6 @@ class LoginViewTestCase(TestCase):
 
 
 class RegisterViewTestCase(TestCase):
-
-    def setUp(self):
-        self.client = Client()
 
     def test_register_page_loads_successfully(self):
 
@@ -171,14 +175,11 @@ class PasswordChangeViewTestCaseLoggedOut(TestCase):
         self.assertRedirects(res, LOGIN_URL+"?next=/password_change/")
 
 
-class PasswordChangeViewTestCaseLoggedIn(TestCase):
+class PasswordChangeViewTestCaseLoggedIn(TestCaseWithUser):
     """Tests for the Password change view"""
 
     def setUp(self):
-        self.client = Client()
-        self.user = get_user_model().objects.create_user(
-            "test@django.com", "django123"
-        )
+        super(PasswordChangeViewTestCaseLoggedIn, self).setUp()
         self.client.force_login(self.user)
 
     def test_page_load_successfully(self):
@@ -238,14 +239,8 @@ class PasswordChangeViewTestCaseLoggedIn(TestCase):
                              "The two password fields didn't match.")
 
 
-class PasswordResetViewTestCase(TestCase):
+class PasswordResetViewTestCase(TestCaseWithUser):
     """Tests for password reset view"""
-
-    def setUp(self):
-        self.client = Client()
-        self.user = get_user_model().objects.create_user(
-            "test@django.com", "django123"
-        )
 
     def test_page_loads_successfully(self):
 
@@ -301,3 +296,39 @@ class PasswordResetViewTestCase(TestCase):
         self.assertRedirects(res, reverse("password_reset_complete"))
         self.assertTrue(self.user.check_password(params["new_password1"]))
         self.assertFalse(self.user.check_password("django123"))
+
+
+class UserDetailPageUnAuth(TestCase):
+
+    def test_redirect_to_login(self):
+        res = self.client.get(PROFILE_URL)
+
+        self.assertEqual(res.status_code, 302)
+        self.assertRedirects(res, "{}?next={}".format(reverse("login"),
+                                                      reverse("profile")))
+
+
+class UserProfileAuth(TestCaseWithUser):
+
+    def setUp(self):
+        super(UserProfileAuth, self).setUp()
+        self.client.force_login(self.user)
+
+    def test_page_load_successfully(self):
+        res = self.client.get(PROFILE_URL)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertTemplateUsed(res, "users/profile.html")
+
+    def test_page_contains_user_model(self):
+        res = self.client.get(PROFILE_URL)
+
+        self.assertIsInstance(res.context["object"], get_user_model())
+
+    def test_get_absolute_url_linked_correctly(self):
+        res1 = self.client.get(self.user.get_absolute_url())
+        res2 = self.client.get(PROFILE_URL)
+
+        self.assertEqual(res1.status_code, 200)
+        self.assertEqual(res2.status_code, res1.status_code)
+        self.assertEqual(res1.request["PATH_INFO"], res2.request["PATH_INFO"])

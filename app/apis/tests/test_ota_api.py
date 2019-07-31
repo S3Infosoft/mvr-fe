@@ -69,7 +69,7 @@ class PrivateOTAAPITestCase(APITestCase):
                    "contact_email": "mynameis@slimshady.com"}
 
         res = self.client.post(OTA_URL, data=payload)
-        instance = OTA.objects.get(pk=1)
+        instance = OTA.objects.first()
         serializer = OTASerializer(instance)
 
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
