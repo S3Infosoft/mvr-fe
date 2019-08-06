@@ -14,6 +14,7 @@ password_urls = [
     path("new/<uidb64>/<token>/",
          views.PasswordResetConfirmView.as_view(),
          name="password_reset_confirm"),
+    path("set/", views.UserPasswordSet.as_view(), name="password_set"),
     path("reset/", views.PasswordResetView.as_view(),
          name="password_reset"),
 ]
@@ -25,7 +26,7 @@ urlpatterns = [
     path("login/", views.LoginView.as_view(), name="login"),
     path("logout/", auth_views.LogoutView.as_view(), name="logout"),
     path("register/", views.RegisterView.as_view(), name="register"),
-    path("password_", include(password_urls)),
+    path("password/", include(password_urls)),
     path("dashboard/", views.index, name="index"),
     path("", RedirectView.as_view(url="/dashboard/", permanent=True)),
 ]

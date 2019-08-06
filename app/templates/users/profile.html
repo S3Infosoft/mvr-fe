@@ -116,10 +116,15 @@
                       </div>
                     </div>
                     <div class="row">
-                      <div class="col-12 col-sm-6 mt-4 mb-2">
-                        <a href="{% url 'password_change' %}">Change password</a>
-                      </div>
-
+                      {% if request.user.has_usable_password %}
+                          <div class="col-12 col-sm-6 mt-4 mb-2">
+                            <a href="{% url 'password_change' %}">Change password</a>
+                        </div>
+                      {% else %}
+                          <div class="col-12 col-sm-6 mt-4 mb-2">
+                            <a href="{% url 'password_set' %}">Set Password</a>
+                        </div>
+                      {% endif %}
                     </div>
                     <div class="row">
                       <div class="col d-flex justify-content-end">

@@ -6,6 +6,7 @@ import debug_toolbar
 
 urlpatterns = [
     path("schedule/", include("schedules.urls", namespace="schedule")),
+    path("accounts/", include("allauth.urls")),
     path("activity/", include("activities.urls", namespace="activity")),
     path("enquiry/", include("enquiry.urls", namespace="enquiry")),
     path('admin/', admin.site.urls),

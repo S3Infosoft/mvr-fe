@@ -13,7 +13,7 @@ SECRET_KEY = 'atnvxcapm%14e+m-o6fk!#o_i4q8yaebpfiko+&2-1=ct!bk6-'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['10.1.33.6', "localhost"]
+ALLOWED_HOSTS = ['10.1.33.6', "localhost", "mysite.com"]
 
 
 # Application definition
@@ -25,7 +25,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    "users.apps.UsersConfig",
+    "django.contrib.sites",
 
     # Packages
     "rest_framework",
@@ -33,13 +33,21 @@ INSTALLED_APPS = [
     "easyaudit",
     "debug_toolbar",
     "background_task",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
+    "allauth.socialaccount.providers.facebook",
 
     # Apps
+    "users.apps.UsersConfig",
     "enquiry.apps.EnquiryConfig",
     "schedules.apps.SchedulesConfig",
     "activities.apps.ActivitiesConfig",
     "apis.apps.ApisConfig",
 ]
+
+SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -241,3 +249,17 @@ REST_FRAMEWORK = {
 }
 
 BACKGROUND_TASK_RUN_ASYNC = True
+
+# Django-allauth settings
+AUTHENTICATION_BACKENDS = (
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
+)
+
+SOCIALACCOUNT_ADAPTER = "config.adapter.CustomSocialAdapter"
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = "email"
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = "none"
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True

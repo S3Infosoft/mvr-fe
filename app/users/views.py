@@ -10,9 +10,16 @@ from django.contrib.auth import views, decorators, get_user_model, mixins
 from django.contrib.messages.views import SuccessMessageMixin
 from django.utils.http import urlsafe_base64_decode
 
+from allauth.account.views import PasswordSetView
+
 import logging
 
 logger = logging.getLogger("auth")
+
+
+class UserPasswordSet(mixins.LoginRequiredMixin, PasswordSetView):
+    template_name = "users/password_set.html"
+    success_url = reverse_lazy("profile")
 
 
 class GlobalInfoDetailUpdate(mixins.LoginRequiredMixin,
