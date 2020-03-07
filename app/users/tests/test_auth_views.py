@@ -172,7 +172,7 @@ class PasswordChangeViewTestCaseLoggedOut(TestCase):
         res = self.client.get(PASSWORD_CHANGE)
 
         self.assertEquals(res.status_code, 302)
-        self.assertRedirects(res, LOGIN_URL+"?next=/password_change/")
+        self.assertRedirects(res, LOGIN_URL+"?next=/password/change/")
 
 
 class PasswordChangeViewTestCaseLoggedIn(TestCaseWithUser):
@@ -284,7 +284,7 @@ class PasswordResetViewTestCase(TestCaseWithUser):
 
         res = self.client.post(password_reset_confirm_url(uid, token))
 
-        redirect_url = f"/password_new/{uid}/set-password/"
+        redirect_url = f"/password/new/{uid}/set-password/"
 
         self.assertEqual(res.status_code, 302)
         self.assertRedirects(res, redirect_url)
