@@ -25,6 +25,26 @@ services:
       sh -c "mkdir -p logs media &&
              python manage.py wait_for_db &&
              python manage.py runserver 0.0.0.0:8000"
+  keycloak:
+    image: jboss/keycloak
+    command: [
+      "-b", "0.0.0.0",
+      "-Dkeycloak.migration.action=import",
+      "-Dkeycloak.migration.provider=dir",
+      "-Dkeycloak.migration.dir=/opt/jboss/keycloak/standalone/configuration/export/",
+      "-Dkeycloak.migration.strategy=IGNORE_EXISTING"
+    ]
+    environment:
+      - DB_NAME=app
+      - DB_USER=insights
+      - DB_HOST=db
+      - DB_PORT=5432
+    volumes:
+      - ./keycloak/export:/opt/jboss/keycloak/standalone/configuration/export
+    networks:
+      default:
+        aliases:
+          - keycloak
   db:
     image: postgres:11.4-alpine
     container_name: postgres
@@ -83,4 +103,4 @@ services:
       - HUB_HOST=selenium-hub
       - HUB_PORT=4444
 volumes:
-  postgres_data:
+    postgres_data:
