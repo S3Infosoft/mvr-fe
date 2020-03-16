@@ -6,6 +6,10 @@ from django.contrib.auth import decorators
 # cache key format <model name in uppercase>-<start-date>-<end-date>
 
 
+def payments_list(request):
+    return render(request, "enquiry/payments.html")
+
+
 @decorators.login_required
 def ota_detail(request, pk):
     obj_data = models.OTA.objects.get(pk=pk)
