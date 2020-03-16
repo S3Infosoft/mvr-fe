@@ -19,6 +19,7 @@ review_links = [
 ]
 
 urlpatterns = [
+    path("payments/", views.payments_list, name="payment_list"),
     path("ota/", include(ota_links)),
     path("partner/", include(partner_links)),
     path("review/", include(review_links)),

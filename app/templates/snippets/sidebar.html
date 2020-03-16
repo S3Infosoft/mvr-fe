@@ -73,6 +73,18 @@
           </div>
         </li>
 
+        <li class="nav-item">
+          <a class="nav-link collapsed payments" href="#" data-toggle="collapse" data-target="#collapsePayments" aria-expanded="true" aria-controls="collapsePages">
+            <i class="fas fa-fw fa-folder"></i>
+            <span>Payments</span>
+          </a>
+          <div id="collapsePayments" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a class="collapse-item" href="{% url 'enquiry:payment_list' %}">Show Details</a>
+            </div>
+          </div>
+        </li>
+
       {% endif %}
 
       <!-- Divider -->
