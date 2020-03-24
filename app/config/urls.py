@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.contrib import admin
 from django.urls import path, include
+from django.conf.urls import url
 from django.conf.urls.static import static
 import debug_toolbar
 
@@ -10,6 +11,7 @@ urlpatterns = [
     path("activity/", include("activities.urls", namespace="activity")),
     path("enquiry/", include("enquiry.urls", namespace="enquiry")),
     path('admin/', admin.site.urls),
+    url(r'^keycloak/', include('django_keycloak.urls')),
     path("api/v1/", include("apis.urls")),
     path("", include("users.urls")),
     path("__debug__", include(debug_toolbar.urls)),

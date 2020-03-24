@@ -29,6 +29,7 @@ INSTALLED_APPS = [
 
     # Packages
     "rest_framework",
+    "django_keycloak",
     "import_export",
     "easyaudit",
     "debug_toolbar",
@@ -62,7 +63,17 @@ MIDDLEWARE = [
     "easyaudit.middleware.easyaudit.EasyAuditMiddleware",
     # django-debug-toolbar middleware
     "debug_toolbar.middleware.DebugToolbarMiddleware",
+    #keycloak
+    'django_keycloak.middleware.BaseKeycloakMiddleware',
+    'django_keycloak.middleware.RemoteUserAuthenticationMiddleware',
 ]
+
+
+PASSWORD_HASHERS = [
+    'django_keycloak.hashers.PBKDF2SHA512PasswordHasher',
+]
+
+
 
 ROOT_URLCONF = 'config.urls'
 
@@ -116,6 +127,9 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+
+KEYCLOAK_OIDC_PROFILE_MODEL = 'django_keycloak.OpenIdConnectProfile'
 
 
 # Internationalization
@@ -254,6 +268,9 @@ BACKGROUND_TASK_RUN_ASYNC = True
 AUTHENTICATION_BACKENDS = (
     "django.contrib.auth.backends.ModelBackend",
     "allauth.account.auth_backends.AuthenticationBackend",
+
+    # keycloak login auth
+    "django_keycloak.auth.backends.KeycloakAuthorizationCodeBackend",
 )
 
 SOCIALACCOUNT_ADAPTER = "config.adapter.CustomSocialAdapter"
@@ -263,3 +280,9 @@ ACCOUNT_AUTHENTICATION_METHOD = "email"
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = "none"
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+
+
+
+
+LOGIN_URL = 'keycloak_login'
+LOGOUT_REDIRECT_URL = 'keycloak_login'
