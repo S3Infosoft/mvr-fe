@@ -1,4 +1,6 @@
 email.txt
+temp.py
+*.xlsx
 logs
 media
 static_root

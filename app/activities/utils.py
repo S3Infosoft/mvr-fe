@@ -1,3 +1,5 @@
+import random
+
 from . import resources
 from enquiry import models
 from users.models import GlobalInfo
@@ -9,6 +11,10 @@ from datetime import datetime
 from io import BytesIO
 
 from xhtml2pdf import pisa
+
+
+def random_ints(size, start=1, stop=100):
+    return [random.randint(start, stop) for _ in range(size)]
 
 
 def render_to_pdf(template_src, context_dic: dict):

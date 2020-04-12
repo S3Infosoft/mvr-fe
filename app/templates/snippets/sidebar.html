@@ -85,6 +85,20 @@
           </div>
         </li>
 
+         <li class="nav-item">
+          <a class="nav-link collapsed master-data" href="#" data-toggle="collapse" data-target="#collapseMasterData"
+             aria-expanded="true" aria-controls="collapsePages">
+            <i class="fas fa-fw fa-folder"></i>
+            <span>Downloads</span>
+          </a>
+          <div id="collapseMasterData" class="collapse" aria-labelledby="headingPages"
+               data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a class="collapse-item" href="{% url 'enquiry:export_users_csv' %}">Master Data</a>
+            </div>
+          </div>
+        </li>
+
       {% endif %}
 
       <!-- Divider -->
