@@ -1,6 +1,6 @@
 import random
 import names
-from . import forms, models
+from . import forms, models, master_data
 from activities.utils import random_ints
 from django.shortcuts import render
 from django.contrib.auth import decorators
@@ -9,8 +9,6 @@ from django.http import HttpResponse
 
 from pyexcelerate import Workbook, Style, Font
 # cache key format <model name in uppercase>-<start-date>-<end-date>
-
-import master_data
 
 def payments_list(request):
     return render(request, "enquiry/payments.html")
