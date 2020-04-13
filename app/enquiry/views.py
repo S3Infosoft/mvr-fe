@@ -10,6 +10,7 @@ from django.http import HttpResponse
 from pyexcelerate import Workbook, Style, Font
 # cache key format <model name in uppercase>-<start-date>-<end-date>
 
+import master_data
 
 def payments_list(request):
     return render(request, "enquiry/payments.html")
@@ -68,6 +69,9 @@ def export_users_csv(request):
                'Commission Amt  ', 'Supplier Amt ', 'Advance Date', ' Advance  Amt  ', 'Room Bill ',
                'Food Bill ', 'Taxi', 'Drink', ' Discount ', 'Total', 'Cash', 'Status',
                'Per Day Room Charges Realised', 'BaNK']
+
+    data = master_data.provide_master_data()
+    # Use this data dictionary for the values in excel.
 
     wb = Workbook()
     ws = wb.new_sheet("Master data Feb - 2020")
