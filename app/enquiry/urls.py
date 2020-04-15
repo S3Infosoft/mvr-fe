@@ -23,5 +23,5 @@ urlpatterns = [
     path("ota/", include(ota_links)),
     path("partner/", include(partner_links)),
     path("review/", include(review_links)),
-    path("export/csv/", views.export_users_csv, name='export_users_csv'),
+    path("export/excel/", views.export_master_excel, name='export_master_excel'),
 ]
