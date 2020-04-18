@@ -1,12 +1,11 @@
 from . import forms, models
-from .master_data import provide_master_data
 from django.shortcuts import render
 from django.contrib.auth import decorators
 
 from django.http import HttpResponse
 
 from pyexcelerate import Workbook, Style, Font
-
+import requests
 
 # cache key format <model name in uppercase>-<start-date>-<end-date>
 
@@ -60,7 +59,10 @@ def review_list(request):
 
 @decorators.login_required
 def export_master_excel(request):
-    data = provide_master_data()
+
+    # paymentautoaudit is the name of the other container running separately on port 8000
+    res = requests.get("http://paymentautoaudit:8000/masterdata/")
+    data = res.json()
     response = HttpResponse(content_type='application/ms-excel')
     response['Content-Disposition'] = f'attachment; filename="{data["metadata"]["filename"]}"'
 
@@ -166,8 +168,6 @@ def export_master_excel(request):
         ws1.set_cell_value(i, 43, formula_string.format(i))
     ws1.set_row_style(7, Style(font=Font(bold=True)))
 
-    print(ws1.num_columns)
-    print(len(tuple(data["tab2_table1"]["data"][0].values())[0]))
     ws1[4:6].value = data["tab2_table1"]["data"][0].values()
 
     ws1.range("B11", "E11").value = [data["tab2_table2"]["headers"]]
@@ -183,3 +183,8 @@ def export_master_excel(request):
     ws1.set_cell_value(15, 5, "=SUM(E12:E14)")
     wb.save(response)
     return response
+
+
+if __name__ == "__main__":
+    res = requests.get("http://localhost:8001/masterdata/")
+    print(res.status_code)
