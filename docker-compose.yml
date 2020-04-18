@@ -25,6 +25,8 @@ services:
       sh -c "mkdir -p logs media &&
              python manage.py wait_for_db &&
              python manage.py runserver 0.0.0.0:8000"
+    networks:
+      - mvr-network
   db:
     image: postgres:11.4-alpine
     container_name: postgres
@@ -33,6 +35,8 @@ services:
     environment:
       - POSTGRES_USER=insights
       - POSTGRES_DB=app
+    networks:
+      - mvr-network
   background_tasks:
     restart: always
     container_name: process_tasks
@@ -50,6 +54,8 @@ services:
       - ./app:/app
     command: >
       sh -c "python manage.py process_tasks --sleep=3 --log-std --traceback"
+    networks:
+      - mvr-network
   # mvrautomation:
   #   restart: always
   #   container_name: mvr_automation
@@ -84,3 +90,6 @@ services:
   #     - HUB_PORT=4444
 volumes:
     postgres_data:
+networks:
+  mvr-network:
+    driver: "bridge"
