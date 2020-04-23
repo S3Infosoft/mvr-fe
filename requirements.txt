@@ -1,4 +1,4 @@
-Django==3.0.5
+Django>=2.2.0,<3
 djangorestframework==3.11.0
 Pillow==6.2.2
 django-import-export==1.2.0
