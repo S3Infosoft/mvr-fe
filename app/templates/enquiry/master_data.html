@@ -1,0 +1,57 @@
+{%  extends 'base.html' %}
+{% block content %}
+  <div class="row mt-5">
+  <div class="col-3"></div>
+  <div class="col-6">
+    <table class="table table-striped">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">Sr.No.</th>
+        <th scope="col">Month Year</th>
+        <th scope="col">Download Excel</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th scope="row">1</th>
+        <td>2020 March</td>
+        <td>
+          <a href="{% url 'enquiry:export_master_excel' month='03' year=2020 %}">
+            Download Excel
+          </a>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">2</th>
+        <td>2020 February</td>
+        <td>
+          <a href="{% url 'enquiry:export_master_excel' month='02' year=2020 %}">
+            Download Excel
+          </a>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">3</th>
+        <td>2020 January</td>
+        <td>
+          <a href="{% url 'enquiry:export_master_excel' month='01' year=2020 %}">
+            Download Excel
+          </a>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">4</th>
+        <td>2019 December</td>
+        <td>
+          <a href="{% url 'enquiry:export_master_excel' month=12 year=2019 %}">
+            Download Excel
+          </a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="col-3"></div>
+  </div>
+
+{% endblock content %}

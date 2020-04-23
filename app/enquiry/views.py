@@ -1,12 +1,11 @@
 from . import forms, models
-from .master_data import provide_master_data
 from django.shortcuts import render
 from django.contrib.auth import decorators
 
 from django.http import HttpResponse
 
 from pyexcelerate import Workbook, Style, Font
-
+import requests
 
 # cache key format <model name in uppercase>-<start-date>-<end-date>
 
@@ -58,16 +57,31 @@ def review_list(request):
                   {"form": forms.ReviewForm()})
 
 
+def master_download(request):
+    return render(request, "enquiry/master_data.html")
+
+
+def excel_apply_formula(sheet, t_row, col_ind: iter, n_columns: iter, operation, s_row, e_row):
+    for i in range(len(col_ind)):
+        sheet.set_cell_value(
+            t_row, col_ind[i], f"={operation}({n_columns[i]}{s_row}:{n_columns[i]}{e_row})"
+        )
+
+
 @decorators.login_required
-def export_master_excel(request):
-    data = provide_master_data()
+def export_master_excel(request, month, year):
+
+    # paymentautoaudit is the name of the other container running separately on port 8000
+    res = requests.get(f"http://paymentautoaudit:8000/masterdata/{month}/{year}")
+    data = res.json()
+    print(res.status_code)
     response = HttpResponse(content_type='application/ms-excel')
     response['Content-Disposition'] = f'attachment; filename="{data["metadata"]["filename"]}"'
 
     wb = Workbook()
     ws = wb.new_sheet(data["metadata"]["tab1_name"])
     ws[1].value = [['MVR']]
-    ws[2].value = [['01-01-2020']]
+    ws[2].value = [[f'01-{month}-{year}']]
     ws.range("A1", "Z1").merge()
     ws[1][1].style.font.bold = True
     ws[1][1].style.font.size = 22
@@ -82,39 +96,38 @@ def export_master_excel(request):
     ws.set_row_style(4, Style(size=25, font=Font(bold=True)))
     ws.set_col_style(list(range(1, 29)), Style(size=-1))
 
-    ws[5:7].value = data["tab1_table1"]["data"][0].values()
+    t1_row_end = 5 + len(data["tab1_table1"]["data"][0].keys()) - 1
+    ws[5:t1_row_end].value = data["tab1_table1"]["data"][0].values()
 
-    ws[8].value = [['Total']]
-    ws.range("A8", "I8").merge()
-    ws[8][1].style.font.bold = True
-    ws[8][1].style.font.size = 16
-    ws[8][1].style.alignment.horizontal = "center"
-    ws.set_cell_value(8, 10, "=SUM(J5:J7)")
-    ws.set_cell_value(8, 11, "=SUM(K5:K7)")
-    ws.set_cell_value(8, 17, "=SUM(L4:L6)")
-    ws.set_cell_value(8, 18, "=SUM(S5:S7)")
-    ws.set_cell_value(8, 19, "=SUM(T5:T7)")
-    ws.set_cell_value(8, 20, "=SUM(U5:U7)")
+    ws[t1_row_end+1].value = [['Total']]
+    ws.set_row_style(t1_row_end+1, Style(size=25, font=Font(bold=True),))
+    ws.range(f"A{t1_row_end+1}", f"I{t1_row_end+1}").merge()
+    ws[t1_row_end+1][1].style.font.bold = True
+    ws[t1_row_end+1][1].style.alignment.horizontal = "center"
+    excel_apply_formula(ws, t1_row_end+1, (10, 11, 12, 18, 19, 20),
+                        ("J", "K", "L", "S", "T", "U"), "SUM", 5, t1_row_end)
 
-    ws[11].value = [['ANALYSIS']]
+    t2_start = ws.num_rows + 2
 
-    ws.range("A11", "J11").merge()
-    ws[11][1].style.font.bold = True
-    ws[11][1].style.font.size = 14
-    ws[11][1].style.alignment.horizontal = "center"
-    ws[12].value = [data["tab1_table2"]["headers"]]
-    ws[13].value = []
-    ws[14].value = [[' ', ' ROOMS ANALYSIS']]
-    ws[14][2].style.font.bold = True
-    ws.set_row_style(12, Style(size=35, font=Font(bold=True)))
+    ws[t2_start+1].value = [['ANALYSIS']]
+
+    ws.range(f"A{t2_start+1}", f"J{t2_start+1}").merge()
+    ws[t2_start+1][1].style.font.bold = True
+    ws[t2_start+1][1].style.font.size = 14
+    ws[t2_start+1][1].style.alignment.horizontal = "center"
+    ws[t2_start+2].value = [data["tab1_table2"]["headers"]]
+    ws[t2_start+3].value = []
+    ws[t2_start+4].value = [[' ', ' ROOMS ANALYSIS']]
+    ws[t2_start+4][2].style.font.bold = True
+    ws.set_row_style(t2_start+2, Style(size=35, font=Font(bold=True)))
     ws.set_col_style(list(range(1, 27)), Style(size=-1))
-    ws[17].value = [['', 'RESTAURANT ANALYSIS']]
-    ws[17][2].style.font.bold = True
-    ws.set_row_style(20, Style(size=20))
+    ws[t2_start+7].value = [['', 'RESTAURANT ANALYSIS']]
+    ws[t2_start+7][2].style.font.bold = True
+    ws.set_row_style(t2_start+10, Style(size=20))
 
-    ws[15:16].value = [data["tab1_table2"]["data"][0]["row1"], data["tab1_table2"]["data"][0]["row2"]]
-    ws[18].value = [data["tab1_table2"]["data"][0]["row3"]]
-    # ws[18:20].value = data["tab1_table2"]["data"][0].values()
+    ws[t2_start+5:t2_start+6].value = [data["tab1_table2"]["data"][0]["row1"], data["tab1_table2"]["data"][0]["row2"]]
+    ws[t2_start+8:t2_start+10].value = [data["tab1_table2"]["data"][0]["row3"], data["tab1_table2"]["data"][0]["row4"],
+                                        data["tab1_table2"]["data"][0]["row5"]]
 
     # New worksheet
     ws1 = wb.new_sheet(data["metadata"]["tab2_name"])
@@ -140,46 +153,41 @@ def export_master_excel(request):
     ws1[3][2].style.font.bold = True
     ws1.set_row_style(3, Style(size=30, font=Font(bold=True)))
     ws1.set_col_style(list(range(1, 43)), Style(size=-1))
-    ws1.range("B7", "E7").value = [['Total']]
-    ws1[7][2].style.font.bold = True
-    ws1[7][2].style.alignment.horizontal = "center"
-    ws1.range("B7", "E7").merge()
-    ws1.set_cell_value(7, 10, "=SUM(J4:J6)")
-    ws1.set_cell_value(7, 11, "=SUM(K4:K6)")
-    ws1.set_cell_value(7, 12, "=SUM(L4:L6)")
-    ws1.set_cell_value(7, 18, "=SUM(R4:R6)")
-    ws1.set_cell_value(7, 19, "=SUM(S4:S6)")
-    ws1.set_cell_value(7, 21, "=SUM(U4:U6)")
-    ws1.set_cell_value(7, 22, "=SUM(V4:V6)")
-    ws1.set_cell_value(7, 23, "=SUM(W4:W6)")
-    ws1.set_cell_value(7, 25, "=SUM(Y4:Y6)")
-    ws1.set_cell_value(7, 26, "=SUM(Z4:Z6)")
-    ws1.set_cell_value(7, 27, "=SUM(AA4:AA6)")
-    ws1.set_cell_value(7, 38, "=SUM(AL4:AL6)")
-    ws1.set_cell_value(7, 39, "=SUM(AM4:AM6)")
-    ws1.set_cell_value(7, 40, "=SUM(AN4:AN6)")
-    ws1.set_cell_value(7, 42, "=SUM(AP4:AP6)")
-    ws1.set_cell_value(7, 43, "=SUM(AQ4:AQ6)")
+    tt1_row_end = 4 + len(data["tab2_table1"]["data"][0].keys()) - 1
+    ws1.range(f"B{tt1_row_end+1}", f"E{tt1_row_end+1}").value = [['Total']]
+    ws1[tt1_row_end+1][2].style.font.bold = True
+    ws1[tt1_row_end+1][2].style.alignment.horizontal = "center"
+    ws1.range(f"B{tt1_row_end+1}", f"E{tt1_row_end+1}").merge()
+
+    excel_apply_formula(ws1, tt1_row_end+1,
+                        [10, 11, 12, 18, 19, 21, 22, 23, 25, 26, 27, 38, 39, 40, 42, 43],
+                        ["J", "K", "L", "R", "S", "U", "V", "W", "Y", "Z", "AA", "AL", "AM", "AN", "AP", "AQ"],
+                        "SUM", s_row=4, e_row=tt1_row_end)
 
     formula_string = "=N{0}+U{0}+Y{0}+AC{0}+AG{0}+AH{0}+AL{0}+AP{0}"
-    for i in range(4, 7):
+    for i in range(4, tt1_row_end):
         ws1.set_cell_value(i, 43, formula_string.format(i))
-    ws1.set_row_style(7, Style(font=Font(bold=True)))
+    ws1.set_row_style(tt1_row_end+1, Style(font=Font(bold=True)))
 
-    print(ws1.num_columns)
-    print(len(tuple(data["tab2_table1"]["data"][0].values())[0]))
-    ws1[4:6].value = data["tab2_table1"]["data"][0].values()
+    ws1[4:tt1_row_end].value = data["tab2_table1"]["data"][0].values()
 
-    ws1.range("B11", "E11").value = [data["tab2_table2"]["headers"]]
+    tt2_start = ws1.num_rows + 3
+    ws1.range(f"B{tt2_start+1}", f"E{tt2_start+1}").value = [data["tab2_table2"]["headers"]]
     ws1.set_col_style(list(range(1, 4)), Style(size=-1))
-    ws1.set_row_style(11, Style(size=30, font=Font(bold=True)))
+    ws1.set_row_style(tt2_start+1, Style(size=30, font=Font(bold=True)))
 
-    ws1[12:14].value = data["tab2_table2"]["data"][0].values()
+    ws1[tt2_start+2:tt2_start+11].value = data["tab2_table2"]["data"][0].values()
+    print(data["tab2_table2"]["data"][0].values())
 
-    ws1[15][2].value = 'TOTAL'
-    ws1[15][2].style.font.bold = True
-    ws1.set_cell_value(15, 3, "=SUM(C12:C14)")
-    ws1.set_cell_value(15, 4, "=SUM(D12:D14)")
-    ws1.set_cell_value(15, 5, "=SUM(E12:E14)")
+    ws1[ws1.num_rows+1][2].value = 'TOTAL'
+    ws1[ws1.num_rows][2].style.font.bold = True
+
+    excel_apply_formula(ws1, tt2_start+12, [3, 4, 5], ["C", "D", "E"], "SUM", tt2_start+2, ws1.num_rows-1)
+    ws1.set_row_style(ws1.num_rows, Style(size=25, font=Font(bold=True)))
     wb.save(response)
     return response
+
+
+if __name__ == "__main__":
+    res = requests.get("http://localhost:8001/masterdata/")
+    print(res.status_code)

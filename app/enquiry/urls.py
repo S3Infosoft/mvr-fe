@@ -1,5 +1,5 @@
 from . import views
-from django.urls import path, include
+from django.urls import path, include, re_path
 
 app_name = "enquiry"
 
@@ -23,5 +23,7 @@ urlpatterns = [
     path("ota/", include(ota_links)),
     path("partner/", include(partner_links)),
     path("review/", include(review_links)),
-    path("export/excel/", views.export_master_excel, name='export_master_excel'),
+    re_path(r"^export/excel/(?P<month>[0-9]{2})/(?P<year>[0-9]{4})/",
+            views.export_master_excel, name='export_master_excel'),
+    path("master/download/", views.master_download, name='master_download'),
 ]

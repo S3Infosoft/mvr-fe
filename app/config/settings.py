@@ -31,7 +31,6 @@ INSTALLED_APPS = [
     "rest_framework",
     "import_export",
     "easyaudit",
-    "debug_toolbar",
     "background_task",
     "allauth",
     "allauth.account",
@@ -132,7 +131,7 @@ USE_L10N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
+# Static files (CSS, JavaScript, Images)ur
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
@@ -208,29 +207,6 @@ IMPORT_EXPORT_USE_TRANSACTIONS = True
 DJANGO_EASY_AUDIT_WATCH_AUTH_EVENTS = False
 DJANGO_EASY_AUDIT_WATCH_REQUEST_EVENTS = False
 DJANGO_EASY_AUDIT_UNREGISTERED_CLASSES_EXTRA = ["users.CustomUser"]
-
-# django-debug-toolbar
-INTERNAL_IPS = ["localhost"]
-DEBUG_TOOLBAR_PANELS = [
-    'debug_toolbar.panels.versions.VersionsPanel',
-    'debug_toolbar.panels.timer.TimerPanel',
-    'debug_toolbar.panels.settings.SettingsPanel',
-    'debug_toolbar.panels.headers.HeadersPanel',
-    'debug_toolbar.panels.request.RequestPanel',
-    'debug_toolbar.panels.sql.SQLPanel',
-    'debug_toolbar.panels.staticfiles.StaticFilesPanel',
-    'debug_toolbar.panels.templates.TemplatesPanel',
-    'debug_toolbar.panels.cache.CachePanel',
-    'debug_toolbar.panels.signals.SignalsPanel',
-    'debug_toolbar.panels.logging.LoggingPanel',
-    'debug_toolbar.panels.redirects.RedirectsPanel',
-]
-
-# if DEBUG:
-DEBUG_TOOLBAR_CONFIG = {
-    "SHOW_TOOLBAR_CALLBACK": lambda request: True
-}
-
 
 CACHES = {
     "default": {
