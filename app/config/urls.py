@@ -11,6 +11,5 @@ urlpatterns = [
     path("enquiry/", include("enquiry.urls", namespace="enquiry")),
     path('admin/', admin.site.urls),
     path("api/v1/", include("apis.urls")),
-    path("", include("users.urls")),
-    path("__debug__", include(debug_toolbar.urls)),
+    path("", include("users.urls"))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
